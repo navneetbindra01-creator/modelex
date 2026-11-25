@@ -1,0 +1,43 @@
+{
+  "_comment": "FIX 4.4 code tables. Override any value to match your venue's Rules of Engagement.",
+  "side": {"BUY": "1", "SELL": "2"},
+  "ord_type": {"MARKET": "1", "LIMIT": "2"},
+  "time_in_force": {"DAY": "0", "GTC": "1", "IOC": "3", "FOK": "4"},
+  "exec_type": {"NEW": "0", "TRADE": "F", "CANCELED": "4", "REPLACED": "5", "REJECTED": "8", "EXPIRED": "C"},
+  "ord_status": {"NEW": "0", "PARTIALLY_FILLED": "1", "FILLED": "2", "CANCELED": "4", "REJECTED": "8", "EXPIRED": "C"},
+  "ord_rej_reason": {
+    "UNKNOWN_INSTRUMENT": "1",
+    "EXCHANGE_CLOSED": "2",
+    "INSTRUMENT_NOT_TRADABLE": "2",
+    "QTY_ABOVE_MAX": "3",
+    "NOTIONAL_LIMIT_EXCEEDED": "3",
+    "UNKNOWN_ORDER": "5",
+    "DUPLICATE_CL_ORD_ID": "6",
+    "DUPLICATE_ORDER": "6",
+    "UNSUPPORTED_ORDER_TYPE": "11",
+    "UNSUPPORTED_TIF": "11",
+    "TIF_NOT_ALLOWED_IN_PHASE": "11",
+    "ORDER_TYPE_NOT_ALLOWED_IN_PHASE": "11",
+    "PRICE_NOT_ALLOWED": "11",
+    "INVALID_QUANTITY": "13",
+    "LOT_SIZE_VIOLATION": "13",
+    "QTY_BELOW_MIN": "13",
+    "PRICE_OUTSIDE_BAND": "16",
+    "INVALID_TICK": "18",
+    "INVALID_PRICE": "18",
+    "PRICE_REQUIRED": "99",
+    "INSTRUMENT_EXPIRED": "99",
+    "MISSING_OR_INVALID_FIELD": "99",
+    "default": "99"
+  },
+  "cxl_rej_reason": {
+    "TOO_LATE_TO_CANCEL": "0",
+    "UNKNOWN_ORDER": "1",
+    "EXCHANGE_CLOSED": "2",
+    "DUPLICATE_CL_ORD_ID": "6",
+    "default": "99"
+  },
+  "cxl_rej_response_to": {"CANCEL": "1", "REPLACE": "2"},
+  "reason_in_text": true,
+  "participant_tag": "49"
+}

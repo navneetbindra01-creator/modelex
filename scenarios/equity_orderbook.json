@@ -1,0 +1,1051 @@
+{
+  "name": "Equity order book - full trading day",
+  "asset_classes": [
+    "EQUITY"
+  ],
+  "auto_schedule": false,
+  "description": "Validation rules (incl. duplicate ClOrdID and duplicate-content rejection), opening auction uncross, price-time priority, amend priority rules, self-trade prevention (cancel resting), IOC/FOK/market behaviour, circuit breaker -> volatility auction, cancel rejects, closing sequence and DAY/GTC expiry. Instruments: VOD.L, AZN.L (banded tick), 7203.T (lot 100), AAPL.OQ (notional cap), SUSP.L (suspended).",
+  "steps": [
+    {
+      "note": "Pre-open call period starts",
+      "do": {
+        "type": "SetPhase",
+        "schedule": "EQUITY_STD",
+        "phase": "PRE_OPEN"
+      },
+      "expect": [
+        {
+          "type": "PhaseChange",
+          "new_phase": "PRE_OPEN"
+        }
+      ]
+    },
+    {
+      "note": "IOC not allowed in a call phase",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X1",
+        "participant": "FIRM_A",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "100",
+        "order_type": "LIMIT",
+        "tif": "IOC",
+        "price": "72.50"
+      },
+      "expect_reject": "TIF_NOT_ALLOWED_IN_PHASE"
+    },
+    {
+      "note": "Off-tick price (tick 0.01)",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X2",
+        "participant": "FIRM_A",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "100",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.555"
+      },
+      "expect_reject": "INVALID_TICK"
+    },
+    {
+      "note": "Banded tick table: AZN.L >= 10000 trades in whole pence",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X3",
+        "participant": "FIRM_A",
+        "symbol": "AZN.L",
+        "side": "BUY",
+        "qty": "10",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "11250.5"
+      },
+      "expect_reject": "INVALID_TICK"
+    },
+    {
+      "note": "Round-lot market (lot 100)",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X4",
+        "participant": "FIRM_A",
+        "symbol": "7203.T",
+        "side": "BUY",
+        "qty": "150",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "2650.0"
+      },
+      "expect_reject": "LOT_SIZE_VIOLATION"
+    },
+    {
+      "note": "Suspended instrument",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X5",
+        "participant": "FIRM_A",
+        "symbol": "SUSP.L",
+        "side": "BUY",
+        "qty": "100",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "1.250"
+      },
+      "expect_reject": "INSTRUMENT_NOT_TRADABLE"
+    },
+    {
+      "note": "Not in golden source",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X6",
+        "participant": "FIRM_A",
+        "symbol": "XYZ.L",
+        "side": "BUY",
+        "qty": "100",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "10.00"
+      },
+      "expect_reject": "UNKNOWN_INSTRUMENT"
+    },
+    {
+      "note": "Static collar +/-10% of 72.50 => [65.25, 79.75]",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X7",
+        "participant": "FIRM_A",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "100",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "80.00"
+      },
+      "expect_reject": "PRICE_OUTSIDE_BAND"
+    },
+    {
+      "note": "Max order size 500,000",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X8",
+        "participant": "FIRM_A",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "600000",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.50"
+      },
+      "expect_reject": "QTY_ABOVE_MAX"
+    },
+    {
+      "note": "Notional cap 5m USD (25,000 x 228.40)",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X9",
+        "participant": "FIRM_A",
+        "symbol": "AAPL.OQ",
+        "side": "BUY",
+        "qty": "25000",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "228.40"
+      },
+      "expect_reject": "NOTIONAL_LIMIT_EXCEEDED"
+    },
+    {
+      "note": "Market order must not carry a price",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X10",
+        "participant": "FIRM_A",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "100",
+        "order_type": "MARKET",
+        "tif": "DAY",
+        "price": "72.50"
+      },
+      "expect_reject": "PRICE_NOT_ALLOWED"
+    },
+    {
+      "note": "Limit order needs a price",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X11",
+        "participant": "FIRM_A",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "100",
+        "order_type": "LIMIT",
+        "tif": "DAY"
+      },
+      "expect_reject": "PRICE_REQUIRED"
+    },
+    {
+      "note": "Zero quantity",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X12",
+        "participant": "FIRM_A",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "0",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.50"
+      },
+      "expect_reject": "INVALID_QUANTITY"
+    },
+    {
+      "note": "Pre-open book: B1 buy 1000 @ 72.60",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B1",
+        "participant": "FIRM_A",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "1000",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.60"
+      },
+      "expect": [
+        {
+          "type": "ExecutionReport",
+          "exec_type": "NEW",
+          "ord_status": "NEW"
+        }
+      ]
+    },
+    {
+      "note": "B2 buy 500 @ 72.50",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B2",
+        "participant": "FIRM_B",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "500",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.50"
+      },
+      "expect": [
+        {
+          "type": "ExecutionReport",
+          "exec_type": "NEW",
+          "ord_status": "NEW"
+        }
+      ]
+    },
+    {
+      "note": "B3 market buy 300 (rests until uncross)",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B3",
+        "participant": "FIRM_C",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "300",
+        "order_type": "MARKET",
+        "tif": "DAY"
+      },
+      "expect": [
+        {
+          "type": "ExecutionReport",
+          "exec_type": "NEW",
+          "ord_status": "NEW"
+        }
+      ]
+    },
+    {
+      "note": "S1 sell 600 @ 72.40",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S1",
+        "participant": "FIRM_D",
+        "symbol": "VOD.L",
+        "side": "SELL",
+        "qty": "600",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.40"
+      },
+      "expect": [
+        {
+          "type": "ExecutionReport",
+          "exec_type": "NEW",
+          "ord_status": "NEW"
+        }
+      ]
+    },
+    {
+      "note": "S2 sell 800 @ 72.50",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S2",
+        "participant": "FIRM_E",
+        "symbol": "VOD.L",
+        "side": "SELL",
+        "qty": "800",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.50"
+      },
+      "expect": [
+        {
+          "type": "ExecutionReport",
+          "exec_type": "NEW",
+          "ord_status": "NEW"
+        }
+      ]
+    },
+    {
+      "note": "S3 sell 400 @ 72.70",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S3",
+        "participant": "FIRM_F",
+        "symbol": "VOD.L",
+        "side": "SELL",
+        "qty": "400",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.70"
+      },
+      "expect": [
+        {
+          "type": "ExecutionReport",
+          "exec_type": "NEW",
+          "ord_status": "NEW"
+        }
+      ]
+    },
+    {
+      "note": "Duplicate ClOrdID B1 from FIRM_A rejected",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B1",
+        "participant": "FIRM_A",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "200",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.00"
+      },
+      "expect_reject": "DUPLICATE_CL_ORD_ID"
+    },
+    {
+      "note": "Same order content as B2 within 500ms rejected (fat-finger guard)",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B2X",
+        "participant": "FIRM_B",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "500",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.50"
+      },
+      "expect_reject": "DUPLICATE_ORDER"
+    },
+    {
+      "note": "Call book may be crossed",
+      "check_book": {
+        "symbol": "VOD.L",
+        "bids": [
+          [
+            "72.60",
+            "1000"
+          ],
+          [
+            "72.50",
+            "500"
+          ]
+        ],
+        "asks": [
+          [
+            "72.40",
+            "600"
+          ],
+          [
+            "72.50",
+            "800"
+          ],
+          [
+            "72.70",
+            "400"
+          ]
+        ]
+      }
+    },
+    {
+      "note": "Open: uncross at 72.50 (max volume 1400, min imbalance)",
+      "do": {
+        "type": "SetPhase",
+        "schedule": "EQUITY_STD",
+        "phase": "CONTINUOUS"
+      },
+      "expect_trades": [
+        {
+          "price": "72.5",
+          "qty": "300"
+        },
+        {
+          "price": "72.5",
+          "qty": "300"
+        },
+        {
+          "price": "72.5",
+          "qty": "700"
+        },
+        {
+          "price": "72.5",
+          "qty": "100"
+        }
+      ]
+    },
+    {
+      "check_auction": {
+        "symbol": "VOD.L",
+        "price": "72.50",
+        "volume": "1400",
+        "imbalance": "400"
+      }
+    },
+    {
+      "check_order": {
+        "participant": "FIRM_A",
+        "cl_ord_id": "B1",
+        "status": "FILLED",
+        "cum_qty": "1000",
+        "avg_px": "72.50"
+      }
+    },
+    {
+      "check_order": {
+        "participant": "FIRM_B",
+        "cl_ord_id": "B2",
+        "status": "PARTIALLY_FILLED",
+        "cum_qty": "100",
+        "leaves_qty": "400"
+      }
+    },
+    {
+      "check_book": {
+        "symbol": "VOD.L",
+        "bids": [
+          [
+            "72.50",
+            "400"
+          ]
+        ],
+        "asks": [
+          [
+            "72.70",
+            "400"
+          ]
+        ]
+      }
+    },
+    {
+      "note": "S4 joins 72.70 behind S3",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S4",
+        "participant": "FIRM_A",
+        "symbol": "VOD.L",
+        "side": "SELL",
+        "qty": "200",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.70"
+      },
+      "expect": [
+        {
+          "type": "ExecutionReport",
+          "exec_type": "NEW",
+          "ord_status": "NEW"
+        }
+      ]
+    },
+    {
+      "note": "S5 sell 300 @ 72.80",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S5",
+        "participant": "FIRM_B",
+        "symbol": "VOD.L",
+        "side": "SELL",
+        "qty": "300",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.80"
+      },
+      "expect": [
+        {
+          "type": "ExecutionReport",
+          "exec_type": "NEW",
+          "ord_status": "NEW"
+        }
+      ]
+    },
+    {
+      "note": "B4 sweeps: S3 then S4 (time priority) then S5 (price)",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B4",
+        "participant": "FIRM_C",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "700",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.80"
+      },
+      "expect_trades": [
+        {
+          "price": "72.7",
+          "qty": "400"
+        },
+        {
+          "price": "72.7",
+          "qty": "200"
+        },
+        {
+          "price": "72.8",
+          "qty": "100"
+        }
+      ]
+    },
+    {
+      "note": "B5 buy 100 @ 72.40",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B5",
+        "participant": "FIRM_D",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "100",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.40"
+      }
+    },
+    {
+      "note": "B6 buy 100 @ 72.40 (behind B5)",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B6",
+        "participant": "FIRM_E",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "100",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.40"
+      }
+    },
+    {
+      "note": "Reduce B5 to 50: keeps priority",
+      "do": {
+        "type": "ReplaceOrder",
+        "cl_ord_id": "R1",
+        "orig_cl_ord_id": "B5",
+        "participant": "FIRM_D",
+        "symbol": "VOD.L",
+        "qty": "50"
+      },
+      "expect": [
+        {
+          "exec_type": "REPLACED",
+          "text": "priority kept",
+          "leaves_qty": "50"
+        }
+      ]
+    },
+    {
+      "note": "S6 sells 460: B2 400 @72.50, then B5 50, then B6 10",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S6",
+        "participant": "FIRM_F",
+        "symbol": "VOD.L",
+        "side": "SELL",
+        "qty": "460",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.40"
+      },
+      "expect_trades": [
+        {
+          "price": "72.5",
+          "qty": "400"
+        },
+        {
+          "price": "72.4",
+          "qty": "50"
+        },
+        {
+          "price": "72.4",
+          "qty": "10"
+        }
+      ]
+    },
+    {
+      "note": "B7 buy 100 @ 72.40 (behind B6)",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B7",
+        "participant": "FIRM_A",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "100",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.40"
+      }
+    },
+    {
+      "note": "Increase B6 to 200: loses priority",
+      "do": {
+        "type": "ReplaceOrder",
+        "cl_ord_id": "R2",
+        "orig_cl_ord_id": "B6",
+        "participant": "FIRM_E",
+        "symbol": "VOD.L",
+        "qty": "200"
+      },
+      "expect": [
+        {
+          "exec_type": "REPLACED",
+          "text": "priority lost",
+          "cum_qty": "10",
+          "leaves_qty": "190"
+        }
+      ]
+    },
+    {
+      "note": "S7 sells 150: B7 first now, then B6",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S7",
+        "participant": "FIRM_B",
+        "symbol": "VOD.L",
+        "side": "SELL",
+        "qty": "150",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.40"
+      },
+      "expect_trades": [
+        {
+          "price": "72.4",
+          "qty": "100"
+        },
+        {
+          "price": "72.4",
+          "qty": "50"
+        }
+      ]
+    },
+    {
+      "check_order": {
+        "participant": "FIRM_A",
+        "cl_ord_id": "B7",
+        "status": "FILLED"
+      }
+    },
+    {
+      "note": "Self-trade prevention (CANCEL_RESTING): FIRM_B buy meets own S5",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B8",
+        "participant": "FIRM_B",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "100",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.80"
+      },
+      "expect": [
+        {
+          "exec_type": "NEW"
+        },
+        {
+          "cl_ord_id": "S5",
+          "exec_type": "CANCELED",
+          "ord_status": "CANCELED"
+        }
+      ],
+      "expect_no_trades": true
+    },
+    {
+      "check_book": {
+        "symbol": "VOD.L",
+        "bids": [
+          [
+            "72.80",
+            "100"
+          ],
+          [
+            "72.40",
+            "140"
+          ]
+        ],
+        "asks": []
+      }
+    },
+    {
+      "note": "IOC: fill 100, expire remaining 200",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S8",
+        "participant": "FIRM_C",
+        "symbol": "VOD.L",
+        "side": "SELL",
+        "qty": "300",
+        "order_type": "LIMIT",
+        "tif": "IOC",
+        "price": "72.80"
+      },
+      "expect_trades": [
+        {
+          "price": "72.8",
+          "qty": "100"
+        }
+      ],
+      "expect": [
+        {
+          "cl_ord_id": "S8",
+          "exec_type": "EXPIRED",
+          "cum_qty": "100"
+        }
+      ]
+    },
+    {
+      "note": "FOK for 500 when 140 available: expires, no trades",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S9",
+        "participant": "FIRM_D",
+        "symbol": "VOD.L",
+        "side": "SELL",
+        "qty": "500",
+        "order_type": "LIMIT",
+        "tif": "FOK",
+        "price": "72.40"
+      },
+      "expect": [
+        {
+          "cl_ord_id": "S9",
+          "exec_type": "EXPIRED",
+          "cum_qty": "0"
+        }
+      ],
+      "expect_no_trades": true
+    },
+    {
+      "note": "FOK for 100: fills in full",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S10",
+        "participant": "FIRM_D",
+        "symbol": "VOD.L",
+        "side": "SELL",
+        "qty": "100",
+        "order_type": "LIMIT",
+        "tif": "FOK",
+        "price": "72.40"
+      },
+      "expect_trades": [
+        {
+          "price": "72.4",
+          "qty": "100"
+        }
+      ]
+    },
+    {
+      "note": "Market IOC with no offers expires",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B9",
+        "participant": "FIRM_E",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "100",
+        "order_type": "MARKET",
+        "tif": "IOC"
+      },
+      "expect": [
+        {
+          "cl_ord_id": "B9",
+          "exec_type": "EXPIRED"
+        }
+      ],
+      "expect_no_trades": true
+    },
+    {
+      "note": "Offer 5.7% away from last (72.40)",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S11",
+        "participant": "FIRM_F",
+        "symbol": "VOD.L",
+        "side": "SELL",
+        "qty": "100",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "76.50"
+      }
+    },
+    {
+      "note": "Buy would print 76.50 > 5% move: circuit breaker, volatility auction",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B10",
+        "participant": "FIRM_A",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "200",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "77.00"
+      },
+      "expect": [
+        {
+          "type": "PhaseChange",
+          "new_phase": "VOLATILITY_AUCTION"
+        },
+        {
+          "type": "Alert",
+          "kind": "CIRCUIT_BREAKER"
+        }
+      ],
+      "expect_no_trades": true
+    },
+    {
+      "check_phase": {
+        "symbol": "VOD.L",
+        "phase": "VOLATILITY_AUCTION"
+      }
+    },
+    {
+      "check_book": {
+        "symbol": "VOD.L",
+        "bids": [
+          [
+            "77.00",
+            "200"
+          ],
+          [
+            "72.40",
+            "40"
+          ]
+        ],
+        "asks": [
+          [
+            "76.50",
+            "100"
+          ]
+        ]
+      }
+    },
+    {
+      "note": "Other equities keep trading continuously",
+      "check_phase": {
+        "symbol": "BARC.L",
+        "phase": "CONTINUOUS"
+      }
+    },
+    {
+      "note": "Auction ends after 120s and uncrosses (buy pressure => highest price 77.00)",
+      "do": {
+        "type": "AdvanceTime",
+        "seconds": "121"
+      },
+      "expect_trades": [
+        {
+          "price": "77.0",
+          "qty": "100"
+        }
+      ]
+    },
+    {
+      "check_phase": {
+        "symbol": "VOD.L",
+        "phase": "CONTINUOUS"
+      }
+    },
+    {
+      "check_order": {
+        "participant": "FIRM_A",
+        "cl_ord_id": "B10",
+        "status": "PARTIALLY_FILLED",
+        "cum_qty": "100"
+      }
+    },
+    {
+      "note": "Cancel B10",
+      "do": {
+        "type": "CancelOrder",
+        "cl_ord_id": "C1",
+        "orig_cl_ord_id": "B10",
+        "participant": "FIRM_A",
+        "symbol": "VOD.L"
+      },
+      "expect": [
+        {
+          "exec_type": "CANCELED",
+          "cl_ord_id": "C1",
+          "orig_cl_ord_id": "B10"
+        }
+      ]
+    },
+    {
+      "note": "Cancel an already-cancelled order",
+      "do": {
+        "type": "CancelOrder",
+        "cl_ord_id": "C2",
+        "orig_cl_ord_id": "B10",
+        "participant": "FIRM_A",
+        "symbol": "VOD.L"
+      },
+      "expect_reject": "TOO_LATE_TO_CANCEL"
+    },
+    {
+      "note": "Cancel an unknown order",
+      "do": {
+        "type": "CancelOrder",
+        "cl_ord_id": "C3",
+        "orig_cl_ord_id": "NOPE",
+        "participant": "FIRM_A",
+        "symbol": "VOD.L"
+      },
+      "expect_reject": "UNKNOWN_ORDER"
+    },
+    {
+      "note": "Replace qty below filled qty",
+      "do": {
+        "type": "ReplaceOrder",
+        "cl_ord_id": "R3",
+        "orig_cl_ord_id": "R2",
+        "participant": "FIRM_E",
+        "symbol": "VOD.L",
+        "qty": "100"
+      },
+      "expect_reject": "INVALID_QUANTITY"
+    },
+    {
+      "note": "Closing auction call",
+      "do": {
+        "type": "SetPhase",
+        "schedule": "EQUITY_STD",
+        "phase": "PRE_CLOSE"
+      }
+    },
+    {
+      "note": "GTC bid survives the close",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "G1",
+        "participant": "FIRM_B",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "100",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "72.00"
+      }
+    },
+    {
+      "note": "DAY offer",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B11",
+        "participant": "FIRM_C",
+        "symbol": "VOD.L",
+        "side": "SELL",
+        "qty": "50",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "78.00"
+      }
+    },
+    {
+      "note": "Close: uncross (nothing crosses)",
+      "do": {
+        "type": "SetPhase",
+        "schedule": "EQUITY_STD",
+        "phase": "POST_CLOSE"
+      },
+      "expect_no_trades": true
+    },
+    {
+      "note": "Market closed: DAY orders expire",
+      "do": {
+        "type": "SetPhase",
+        "schedule": "EQUITY_STD",
+        "phase": "CLOSED"
+      },
+      "expect": [
+        {
+          "cl_ord_id": "R2",
+          "exec_type": "EXPIRED"
+        },
+        {
+          "cl_ord_id": "B11",
+          "exec_type": "EXPIRED"
+        }
+      ]
+    },
+    {
+      "check_book": {
+        "symbol": "VOD.L",
+        "bids": [
+          [
+            "72.00",
+            "100"
+          ]
+        ],
+        "asks": []
+      }
+    },
+    {
+      "note": "Orders rejected while closed",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X13",
+        "participant": "FIRM_A",
+        "symbol": "VOD.L",
+        "side": "BUY",
+        "qty": "100",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "72.00"
+      },
+      "expect_reject": "EXCHANGE_CLOSED"
+    },
+    {
+      "note": "Illegal transition CLOSED -> POST_CLOSE is rejected",
+      "do": {
+        "type": "SetPhase",
+        "schedule": "EQUITY_STD",
+        "phase": "POST_CLOSE"
+      },
+      "expect_reject": "INVALID_PHASE_TRANSITION"
+    },
+    {
+      "check_phase": {
+        "schedule": "EQUITY_STD",
+        "phase": "CLOSED"
+      }
+    }
+  ]
+}

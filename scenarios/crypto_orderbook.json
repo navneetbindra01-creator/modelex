@@ -1,0 +1,636 @@
+{
+  "name": "Crypto order book - 24x7 continuous",
+  "asset_classes": [
+    "CRYPTO"
+  ],
+  "auto_schedule": false,
+  "description": "Fractional quantities (lot 0.0001 BTC), GTC/IOC/FOK only, notional cap, market orders, self-trade prevention (cancel incoming), circuit breaker -> 60s volatility auction, instrument halt/resume and per-participant ClOrdID uniqueness.",
+  "steps": [
+    {
+      "note": "24x7 venue starts continuous",
+      "check_phase": {
+        "symbol": "BTC-USD",
+        "phase": "CONTINUOUS"
+      }
+    },
+    {
+      "note": "DAY not offered on this venue",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X1",
+        "participant": "MM_1",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "0.1",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "65000.00"
+      },
+      "expect_reject": "UNSUPPORTED_TIF"
+    },
+    {
+      "note": "Below lot size 0.0001",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X2",
+        "participant": "MM_1",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "0.00005",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "65000.00"
+      },
+      "expect_reject": "LOT_SIZE_VIOLATION"
+    },
+    {
+      "note": "Off tick 0.01",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X3",
+        "participant": "MM_1",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "0.1",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "65000.005"
+      },
+      "expect_reject": "INVALID_TICK"
+    },
+    {
+      "note": "Above max qty 100",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X4",
+        "participant": "MM_1",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "101",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "65000.00"
+      },
+      "expect_reject": "QTY_ABOVE_MAX"
+    },
+    {
+      "note": "Notional 80 x 65,000 = 5.2m > 5m cap",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X5",
+        "participant": "MM_1",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "80",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "65000.00"
+      },
+      "expect_reject": "NOTIONAL_LIMIT_EXCEEDED"
+    },
+    {
+      "note": "Outside +/-20% band",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X6",
+        "participant": "MM_1",
+        "symbol": "BTC-USD",
+        "side": "SELL",
+        "qty": "0.1",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "80000.00"
+      },
+      "expect_reject": "PRICE_OUTSIDE_BAND"
+    },
+    {
+      "note": "ETH lot 0.001",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X7",
+        "participant": "MM_1",
+        "symbol": "ETH-USD",
+        "side": "BUY",
+        "qty": "0.0005",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "3200.00"
+      },
+      "expect_reject": "LOT_SIZE_VIOLATION"
+    },
+    {
+      "note": "Delisted token",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X8",
+        "participant": "MM_1",
+        "symbol": "DELIST-USD",
+        "side": "BUY",
+        "qty": "10",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "1.00"
+      },
+      "expect_reject": "INSTRUMENT_NOT_TRADABLE"
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S1",
+        "participant": "MM_1",
+        "symbol": "BTC-USD",
+        "side": "SELL",
+        "qty": "0.5",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "65010.00"
+      },
+      "expect": [
+        {
+          "type": "ExecutionReport",
+          "exec_type": "NEW",
+          "ord_status": "NEW"
+        }
+      ]
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S2",
+        "participant": "MM_2",
+        "symbol": "BTC-USD",
+        "side": "SELL",
+        "qty": "0.25",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "65010.00"
+      },
+      "expect": [
+        {
+          "type": "ExecutionReport",
+          "exec_type": "NEW",
+          "ord_status": "NEW"
+        }
+      ]
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S3",
+        "participant": "MM_1",
+        "symbol": "BTC-USD",
+        "side": "SELL",
+        "qty": "1.0",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "65050.00"
+      },
+      "expect": [
+        {
+          "type": "ExecutionReport",
+          "exec_type": "NEW",
+          "ord_status": "NEW"
+        }
+      ]
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B1",
+        "participant": "MM_2",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "0.75",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "64990.00"
+      },
+      "expect": [
+        {
+          "type": "ExecutionReport",
+          "exec_type": "NEW",
+          "ord_status": "NEW"
+        }
+      ]
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B2",
+        "participant": "MM_3",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "0.3",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "64980.50"
+      },
+      "expect": [
+        {
+          "type": "ExecutionReport",
+          "exec_type": "NEW",
+          "ord_status": "NEW"
+        }
+      ]
+    },
+    {
+      "check_book": {
+        "symbol": "BTC-USD",
+        "bids": [
+          [
+            "64990",
+            "0.75",
+            1
+          ],
+          [
+            "64980.5",
+            "0.3",
+            1
+          ]
+        ],
+        "asks": [
+          [
+            "65010",
+            "0.75",
+            2
+          ],
+          [
+            "65050",
+            "1",
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "note": "IOC taker lifts 0.6: S1 0.5 then S2 0.1 (FIFO)",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B3",
+        "participant": "TAKER_A",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "0.6",
+        "order_type": "LIMIT",
+        "tif": "IOC",
+        "price": "65020.00"
+      },
+      "expect_trades": [
+        {
+          "price": "65010",
+          "qty": "0.5"
+        },
+        {
+          "price": "65010",
+          "qty": "0.1"
+        }
+      ]
+    },
+    {
+      "note": "Market sell 1.0 walks the bids",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S4",
+        "participant": "TAKER_B",
+        "symbol": "BTC-USD",
+        "side": "SELL",
+        "qty": "1.0",
+        "order_type": "MARKET",
+        "tif": "IOC"
+      },
+      "expect_trades": [
+        {
+          "price": "64990",
+          "qty": "0.75"
+        },
+        {
+          "price": "64980.5",
+          "qty": "0.25"
+        }
+      ]
+    },
+    {
+      "note": "B4 takes remaining 0.15 of S2 and rests 0.05",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B4",
+        "participant": "MM_1",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "0.2",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "65010.00"
+      },
+      "expect_trades": [
+        {
+          "price": "65010",
+          "qty": "0.15"
+        }
+      ]
+    },
+    {
+      "note": "STP cancel-incoming: MM_1 buy would hit own S3",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B5",
+        "participant": "MM_1",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "1.0",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "65050.00"
+      },
+      "expect": [
+        {
+          "cl_ord_id": "B5",
+          "exec_type": "CANCELED"
+        }
+      ],
+      "expect_no_trades": true
+    },
+    {
+      "check_book": {
+        "symbol": "BTC-USD",
+        "bids": [
+          [
+            "65010",
+            "0.05"
+          ],
+          [
+            "64980.5",
+            "0.05"
+          ]
+        ],
+        "asks": [
+          [
+            "65050",
+            "1"
+          ]
+        ]
+      }
+    },
+    {
+      "note": "FOK 2.0 > 1.0 available: expires",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B6",
+        "participant": "TAKER_A",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "2.0",
+        "order_type": "LIMIT",
+        "tif": "FOK",
+        "price": "65050.00"
+      },
+      "expect": [
+        {
+          "cl_ord_id": "B6",
+          "exec_type": "EXPIRED"
+        }
+      ],
+      "expect_no_trades": true
+    },
+    {
+      "note": "FOK 0.4 fills",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B7",
+        "participant": "TAKER_A",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "0.4",
+        "order_type": "LIMIT",
+        "tif": "FOK",
+        "price": "65050.00"
+      },
+      "expect_trades": [
+        {
+          "price": "65050",
+          "qty": "0.4"
+        }
+      ]
+    },
+    {
+      "note": "Amend price on a partially-filled order",
+      "do": {
+        "type": "ReplaceOrder",
+        "cl_ord_id": "R1",
+        "orig_cl_ord_id": "B2",
+        "participant": "MM_3",
+        "symbol": "BTC-USD",
+        "price": "64985.00"
+      },
+      "expect": [
+        {
+          "exec_type": "REPLACED",
+          "ord_status": "PARTIALLY_FILLED",
+          "price": "64985"
+        }
+      ]
+    },
+    {
+      "note": "Amend qty below filled qty",
+      "do": {
+        "type": "ReplaceOrder",
+        "cl_ord_id": "R2",
+        "orig_cl_ord_id": "R1",
+        "participant": "MM_3",
+        "symbol": "BTC-USD",
+        "qty": "0.2"
+      },
+      "expect_reject": "INVALID_QUANTITY"
+    },
+    {
+      "note": "Offer 9% above last trade",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S5",
+        "participant": "MM_2",
+        "symbol": "BTC-USD",
+        "side": "SELL",
+        "qty": "0.1",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "71000.00"
+      }
+    },
+    {
+      "note": "Sweep: fills 0.6 @ 65050 then breaches 8% breaker",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B8",
+        "participant": "TAKER_C",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "1.0",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "72000.00"
+      },
+      "expect_trades": [
+        {
+          "price": "65050",
+          "qty": "0.6"
+        }
+      ],
+      "expect": [
+        {
+          "type": "Alert",
+          "kind": "CIRCUIT_BREAKER"
+        }
+      ]
+    },
+    {
+      "check_phase": {
+        "symbol": "BTC-USD",
+        "phase": "VOLATILITY_AUCTION"
+      }
+    },
+    {
+      "note": "IOC rejected during auction call",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X9",
+        "participant": "TAKER_A",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "0.1",
+        "order_type": "LIMIT",
+        "tif": "IOC",
+        "price": "70000.00"
+      },
+      "expect_reject": "TIF_NOT_ALLOWED_IN_PHASE"
+    },
+    {
+      "note": "60s later the auction uncrosses",
+      "do": {
+        "type": "AdvanceTime",
+        "seconds": "61"
+      },
+      "expect_trades": [
+        {
+          "price": "72000",
+          "qty": "0.1"
+        }
+      ]
+    },
+    {
+      "check_auction": {
+        "symbol": "BTC-USD",
+        "price": "72000",
+        "volume": "0.1"
+      }
+    },
+    {
+      "check_phase": {
+        "symbol": "BTC-USD",
+        "phase": "CONTINUOUS"
+      }
+    },
+    {
+      "note": "Regulatory halt of one instrument",
+      "do": {
+        "type": "HaltInstrument",
+        "symbol": "BTC-USD",
+        "reason": "exchange incident"
+      },
+      "expect": [
+        {
+          "type": "PhaseChange",
+          "new_phase": "HALTED"
+        },
+        {
+          "type": "Alert",
+          "kind": "INSTRUMENT_HALT"
+        }
+      ]
+    },
+    {
+      "note": "New orders rejected while halted",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X10",
+        "participant": "MM_2",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "0.1",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "65000.00"
+      },
+      "expect_reject": "EXCHANGE_CLOSED"
+    },
+    {
+      "note": "...but cancels are accepted",
+      "do": {
+        "type": "CancelOrder",
+        "cl_ord_id": "C1",
+        "orig_cl_ord_id": "B4",
+        "participant": "MM_1",
+        "symbol": "BTC-USD"
+      },
+      "expect": [
+        {
+          "exec_type": "CANCELED"
+        }
+      ]
+    },
+    {
+      "note": "ETH unaffected",
+      "check_phase": {
+        "symbol": "ETH-USD",
+        "phase": "CONTINUOUS"
+      }
+    },
+    {
+      "do": {
+        "type": "ResumeInstrument",
+        "symbol": "BTC-USD"
+      },
+      "expect": [
+        {
+          "type": "PhaseChange",
+          "new_phase": "CONTINUOUS"
+        }
+      ]
+    },
+    {
+      "note": "ClOrdID B1 reused by MM_2: duplicate",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B1",
+        "participant": "MM_2",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "0.01",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "65000.00"
+      },
+      "expect_reject": "DUPLICATE_CL_ORD_ID"
+    },
+    {
+      "note": "Same ClOrdID from a different participant is fine",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B1",
+        "participant": "MM_9",
+        "symbol": "BTC-USD",
+        "side": "BUY",
+        "qty": "0.01",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "65000.00"
+      },
+      "expect": [
+        {
+          "type": "ExecutionReport",
+          "exec_type": "NEW",
+          "ord_status": "NEW"
+        }
+      ]
+    }
+  ]
+}

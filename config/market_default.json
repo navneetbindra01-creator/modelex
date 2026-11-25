@@ -1,0 +1,132 @@
+{
+  "_comment": "ModelEx market profile. Everything here is customisable per venue; see docs/CUSTOMISATION.md.",
+  "exchange": {
+    "name": "ModelEx Multi-Asset Demo Exchange",
+    "mic": "XMDL",
+    "trading_date": "2026-11-25",
+    "duplicate_cl_ord_id_scope": "ALL"
+  },
+
+  "global_validation_rules": ["REQUIRED_FIELDS", "DUPLICATE_CL_ORD_ID", "UNKNOWN_INSTRUMENT"],
+
+  "phase_rules": {
+    "CLOSED":             {"accept_new": false, "accept_cancel": false, "accept_amend": false, "matching": "NONE", "expire_day_orders_on_entry": true},
+    "PRE_OPEN":           {"accept_new": true,  "accept_cancel": true,  "accept_amend": true,  "matching": "CALL", "allowed_tif": ["DAY", "GTC"]},
+    "CONTINUOUS":         {"accept_new": true,  "accept_cancel": true,  "accept_amend": true,  "matching": "CONTINUOUS", "uncross_on_entry": true},
+    "PRE_CLOSE":          {"accept_new": true,  "accept_cancel": true,  "accept_amend": true,  "matching": "CALL", "allowed_tif": ["DAY", "GTC"]},
+    "POST_CLOSE":         {"accept_new": false, "accept_cancel": true,  "accept_amend": false, "matching": "NONE", "uncross_on_entry": true},
+    "HALTED":             {"accept_new": false, "accept_cancel": true,  "accept_amend": false, "matching": "NONE"},
+    "VOLATILITY_AUCTION": {"accept_new": true,  "accept_cancel": true,  "accept_amend": true,  "matching": "CALL", "allowed_tif": ["DAY", "GTC"]}
+  },
+
+  "transitions": {
+    "CLOSED":     ["PRE_OPEN", "CONTINUOUS", "HALTED"],
+    "PRE_OPEN":   ["CONTINUOUS", "HALTED", "CLOSED"],
+    "CONTINUOUS": ["PRE_CLOSE", "POST_CLOSE", "HALTED", "CLOSED"],
+    "PRE_CLOSE":  ["POST_CLOSE", "HALTED", "CLOSED"],
+    "POST_CLOSE": ["CLOSED"],
+    "HALTED":     ["PRE_OPEN", "CONTINUOUS", "CLOSED"],
+    "VOLATILITY_AUCTION": []
+  },
+
+  "schedules": {
+    "EQUITY_STD": {
+      "initial_phase": "CLOSED",
+      "timeline": [
+        {"time": "07:50", "phase": "PRE_OPEN"},
+        {"time": "08:00", "phase": "CONTINUOUS"},
+        {"time": "16:30", "phase": "PRE_CLOSE"},
+        {"time": "16:35", "phase": "POST_CLOSE"},
+        {"time": "17:15", "phase": "CLOSED"}
+      ]
+    },
+    "CRYPTO_24X7": {"initial_phase": "CONTINUOUS", "timeline": []},
+    "COMMODITY_FUT": {
+      "initial_phase": "CLOSED",
+      "timeline": [
+        {"time": "00:45", "phase": "PRE_OPEN"},
+        {"time": "01:00", "phase": "CONTINUOUS"},
+        {"time": "19:00", "phase": "POST_CLOSE"},
+        {"time": "19:30", "phase": "CLOSED"}
+      ]
+    },
+    "COLLECTIBLE_DAILY": {
+      "initial_phase": "CLOSED",
+      "timeline": [
+        {"time": "09:00", "phase": "PRE_OPEN"},
+        {"time": "10:00", "phase": "CONTINUOUS"},
+        {"time": "20:00", "phase": "PRE_CLOSE"},
+        {"time": "20:05", "phase": "POST_CLOSE"},
+        {"time": "20:30", "phase": "CLOSED"}
+      ]
+    }
+  },
+
+  "asset_classes": {
+    "EQUITY": {
+      "schedule": "EQUITY_STD",
+      "matching_algorithm": "PRICE_TIME",
+      "order_types": ["LIMIT", "MARKET"],
+      "time_in_force": ["DAY", "GTC", "IOC", "FOK"],
+      "self_trade_prevention": "CANCEL_RESTING",
+      "duplicate_order_window_ms": 500,
+      "circuit_breaker": {"enabled": true, "pct": "5", "auction_seconds": 120},
+      "protocol": "FIX44",
+      "validation_rules": ["INSTRUMENT_STATUS", "SESSION_PHASE", "ORDER_TYPE", "TIME_IN_FORCE", "PRICE_PRESENCE",
+                           "QUANTITY_POSITIVE", "LOT_SIZE", "MIN_MAX_QTY", "TICK_SIZE", "PRICE_BAND",
+                           "MAX_NOTIONAL", "DUPLICATE_ORDER"]
+    },
+    "CRYPTO": {
+      "schedule": "CRYPTO_24X7",
+      "matching_algorithm": "PRICE_TIME",
+      "order_types": ["LIMIT", "MARKET"],
+      "time_in_force": ["GTC", "IOC", "FOK"],
+      "self_trade_prevention": "CANCEL_INCOMING",
+      "duplicate_order_window_ms": 0,
+      "circuit_breaker": {"enabled": true, "pct": "8", "auction_seconds": 60},
+      "protocol": "JSON",
+      "max_notional": "5000000",
+      "validation_rules": ["INSTRUMENT_STATUS", "SESSION_PHASE", "ORDER_TYPE", "TIME_IN_FORCE", "PRICE_PRESENCE",
+                           "QUANTITY_POSITIVE", "LOT_SIZE", "MIN_MAX_QTY", "TICK_SIZE", "PRICE_BAND",
+                           "MAX_NOTIONAL"]
+    },
+    "COMMODITY": {
+      "schedule": "COMMODITY_FUT",
+      "matching_algorithm": "PRO_RATA",
+      "order_types": ["LIMIT", "MARKET"],
+      "time_in_force": ["DAY", "GTC", "IOC", "FOK"],
+      "self_trade_prevention": "CANCEL_BOTH",
+      "duplicate_order_window_ms": 0,
+      "circuit_breaker": {"enabled": true, "pct": "4", "auction_seconds": 120},
+      "protocol": "FIX44",
+      "validation_rules": ["INSTRUMENT_STATUS", "INSTRUMENT_EXPIRY", "SESSION_PHASE", "ORDER_TYPE",
+                           "TIME_IN_FORCE", "PRICE_PRESENCE", "QUANTITY_POSITIVE", "LOT_SIZE", "MIN_MAX_QTY",
+                           "TICK_SIZE", "PRICE_BAND", "MAX_NOTIONAL"]
+    },
+    "COLLECTIBLE": {
+      "schedule": "COLLECTIBLE_DAILY",
+      "matching_algorithm": "PRICE_TIME",
+      "order_types": ["LIMIT"],
+      "time_in_force": ["DAY", "GTC"],
+      "self_trade_prevention": "CANCEL_INCOMING",
+      "duplicate_order_window_ms": 2000,
+      "circuit_breaker": {"enabled": true, "pct": "15", "auction_seconds": 300},
+      "protocol": "JSON",
+      "max_notional": "100000",
+      "validation_rules": ["INSTRUMENT_STATUS", "SESSION_PHASE", "ORDER_TYPE", "TIME_IN_FORCE", "PRICE_PRESENCE",
+                           "QUANTITY_POSITIVE", "LOT_SIZE", "MIN_MAX_QTY", "UNIQUE_ITEM", "TICK_SIZE",
+                           "PRICE_BAND", "MAX_NOTIONAL", "DUPLICATE_ORDER"]
+    }
+  },
+
+  "monitoring": {
+    "reject_rate_alert_pct": 40,
+    "reject_rate_min_orders": 25,
+    "large_trade_notional": {"EQUITY": "250000", "CRYPTO": "500000", "COMMODITY": "2000000", "COLLECTIBLE": "100000"}
+  },
+
+  "protocols": {
+    "FIX44": {"mapping_file": "../protocol_maps/fix44.json", "sender_comp_id": "XMDL"},
+    "JSON":  {"mapping_file": "../protocol_maps/json_api.json"}
+  }
+}

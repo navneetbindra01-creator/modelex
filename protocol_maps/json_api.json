@@ -1,0 +1,20 @@
+{
+  "_comment": "JSON API vocabulary. Venue-facing reject strings are mapped from canonical reasons; reasonCode always carries the canonical value.",
+  "side": {"BUY": "buy", "SELL": "sell"},
+  "ord_type": {"LIMIT": "limit", "MARKET": "market"},
+  "time_in_force": {"DAY": "DAY", "GTC": "GTC", "IOC": "IOC", "FOK": "FOK"},
+  "exec_type": {"NEW": "new", "TRADE": "trade", "CANCELED": "canceled", "REPLACED": "amended", "REJECTED": "rejected", "EXPIRED": "expired"},
+  "ord_status": {"NEW": "open", "PARTIALLY_FILLED": "partially_filled", "FILLED": "filled", "CANCELED": "canceled", "REJECTED": "rejected", "EXPIRED": "expired"},
+  "reject_reason": {
+    "INVALID_TICK": "PRICE_FILTER",
+    "PRICE_OUTSIDE_BAND": "PERCENT_PRICE",
+    "LOT_SIZE_VIOLATION": "LOT_SIZE",
+    "QTY_BELOW_MIN": "LOT_SIZE",
+    "QTY_ABOVE_MAX": "LOT_SIZE",
+    "NOTIONAL_LIMIT_EXCEEDED": "NOTIONAL",
+    "DUPLICATE_CL_ORD_ID": "DUPLICATE_CLIENT_ORDER_ID",
+    "UNKNOWN_INSTRUMENT": "INVALID_SYMBOL",
+    "UNKNOWN_ORDER": "UNKNOWN_ORDER",
+    "EXCHANGE_CLOSED": "MARKET_CLOSED"
+  }
+}

@@ -1,0 +1,501 @@
+{
+  "name": "Commodity futures order book - pro-rata matching",
+  "asset_classes": [
+    "COMMODITY"
+  ],
+  "auto_schedule": false,
+  "description": "Futures with contract multipliers, expiry checks, notional cap, opening auction, PRO-RATA allocation with FIFO remainder, self-trade prevention (cancel both), FOK, circuit breaker and DAY expiry. Instrument: CL-JAN27 (1,000 bbl, tick 0.01).",
+  "steps": [
+    {
+      "do": {
+        "type": "SetPhase",
+        "schedule": "COMMODITY_FUT",
+        "phase": "PRE_OPEN"
+      }
+    },
+    {
+      "note": "Expired contract",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X1",
+        "participant": "FIRM_A",
+        "symbol": "NG-NOV26",
+        "side": "BUY",
+        "qty": "1",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "3.250"
+      },
+      "expect_reject": "INSTRUMENT_EXPIRED"
+    },
+    {
+      "note": "Notional 150 x 2650.0 x 100 oz = 39.75m > 30m",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X2",
+        "participant": "FIRM_A",
+        "symbol": "GC-FEB27",
+        "side": "BUY",
+        "qty": "150",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "2650.0"
+      },
+      "expect_reject": "NOTIONAL_LIMIT_EXCEEDED"
+    },
+    {
+      "note": "Max 500 lots",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X3",
+        "participant": "FIRM_A",
+        "symbol": "CL-JAN27",
+        "side": "BUY",
+        "qty": "501",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "71.25"
+      },
+      "expect_reject": "QTY_ABOVE_MAX"
+    },
+    {
+      "note": "Suspended contract",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X5",
+        "participant": "FIRM_A",
+        "symbol": "KC-MAR27",
+        "side": "BUY",
+        "qty": "1",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "245.50"
+      },
+      "expect_reject": "INSTRUMENT_NOT_TRADABLE"
+    },
+    {
+      "note": "Off tick",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X4",
+        "participant": "FIRM_A",
+        "symbol": "CL-JAN27",
+        "side": "BUY",
+        "qty": "1",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "71.255"
+      },
+      "expect_reject": "INVALID_TICK"
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B1",
+        "participant": "FIRM_A",
+        "symbol": "CL-JAN27",
+        "side": "BUY",
+        "qty": "50",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "71.30"
+      }
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B2",
+        "participant": "FIRM_B",
+        "symbol": "CL-JAN27",
+        "side": "BUY",
+        "qty": "30",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "71.25"
+      }
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S1",
+        "participant": "FIRM_C",
+        "symbol": "CL-JAN27",
+        "side": "SELL",
+        "qty": "40",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "71.20"
+      }
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S2",
+        "participant": "FIRM_D",
+        "symbol": "CL-JAN27",
+        "side": "SELL",
+        "qty": "60",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "71.30"
+      }
+    },
+    {
+      "note": "Open: 71.30 maximises volume (50)",
+      "do": {
+        "type": "SetPhase",
+        "schedule": "COMMODITY_FUT",
+        "phase": "CONTINUOUS"
+      },
+      "expect_trades": [
+        {
+          "price": "71.3",
+          "qty": "40"
+        },
+        {
+          "price": "71.3",
+          "qty": "10"
+        }
+      ]
+    },
+    {
+      "check_auction": {
+        "symbol": "CL-JAN27",
+        "price": "71.30",
+        "volume": "50",
+        "imbalance": "-50"
+      }
+    },
+    {
+      "check_book": {
+        "symbol": "CL-JAN27",
+        "bids": [
+          [
+            "71.25",
+            "30"
+          ]
+        ],
+        "asks": [
+          [
+            "71.30",
+            "50"
+          ]
+        ]
+      }
+    },
+    {
+      "note": "Level 71.40: 10 / 30 / 60 lots",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S3",
+        "participant": "FIRM_E",
+        "symbol": "CL-JAN27",
+        "side": "SELL",
+        "qty": "10",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "71.40"
+      }
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S4",
+        "participant": "FIRM_F",
+        "symbol": "CL-JAN27",
+        "side": "SELL",
+        "qty": "30",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "71.40"
+      }
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S5",
+        "participant": "FIRM_G",
+        "symbol": "CL-JAN27",
+        "side": "SELL",
+        "qty": "60",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "71.40"
+      }
+    },
+    {
+      "note": "Buy 100: 50 @ 71.30, then 50 shared pro-rata 5/15/30",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B3",
+        "participant": "FIRM_H",
+        "symbol": "CL-JAN27",
+        "side": "BUY",
+        "qty": "100",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "71.40"
+      },
+      "expect_trades": [
+        {
+          "price": "71.3",
+          "qty": "50"
+        },
+        {
+          "price": "71.4",
+          "qty": "5"
+        },
+        {
+          "price": "71.4",
+          "qty": "15"
+        },
+        {
+          "price": "71.4",
+          "qty": "30"
+        }
+      ]
+    },
+    {
+      "note": "Buy 7 vs 5/15/30: floor shares 0/2/4, remainder 1 to oldest (S3)",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B4",
+        "participant": "FIRM_H",
+        "symbol": "CL-JAN27",
+        "side": "BUY",
+        "qty": "7",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "71.40"
+      },
+      "expect_trades": [
+        {
+          "price": "71.4",
+          "qty": "1"
+        },
+        {
+          "price": "71.4",
+          "qty": "2"
+        },
+        {
+          "price": "71.4",
+          "qty": "4"
+        }
+      ]
+    },
+    {
+      "note": "STP cancel-both: FIRM_G buy allocated against own S5",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B5",
+        "participant": "FIRM_G",
+        "symbol": "CL-JAN27",
+        "side": "BUY",
+        "qty": "10",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "71.40"
+      },
+      "expect_trades": [
+        {
+          "price": "71.4",
+          "qty": "1"
+        },
+        {
+          "price": "71.4",
+          "qty": "3"
+        }
+      ],
+      "expect": [
+        {
+          "cl_ord_id": "S5",
+          "exec_type": "CANCELED"
+        },
+        {
+          "cl_ord_id": "B5",
+          "exec_type": "CANCELED",
+          "cum_qty": "4"
+        }
+      ]
+    },
+    {
+      "check_book": {
+        "symbol": "CL-JAN27",
+        "bids": [
+          [
+            "71.25",
+            "30"
+          ]
+        ],
+        "asks": [
+          [
+            "71.40",
+            "13",
+            2
+          ]
+        ]
+      }
+    },
+    {
+      "note": "Market sell 20 hits B2",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S6",
+        "participant": "FIRM_A",
+        "symbol": "CL-JAN27",
+        "side": "SELL",
+        "qty": "20",
+        "order_type": "MARKET",
+        "tif": "IOC"
+      },
+      "expect_trades": [
+        {
+          "price": "71.25",
+          "qty": "20"
+        }
+      ]
+    },
+    {
+      "note": "FOK 50 vs 10 available: expires",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S7",
+        "participant": "FIRM_C",
+        "symbol": "CL-JAN27",
+        "side": "SELL",
+        "qty": "50",
+        "order_type": "LIMIT",
+        "tif": "FOK",
+        "price": "71.20"
+      },
+      "expect_no_trades": true,
+      "expect": [
+        {
+          "cl_ord_id": "S7",
+          "exec_type": "EXPIRED"
+        }
+      ]
+    },
+    {
+      "note": "FOK 10 fills",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S8",
+        "participant": "FIRM_C",
+        "symbol": "CL-JAN27",
+        "side": "SELL",
+        "qty": "10",
+        "order_type": "LIMIT",
+        "tif": "FOK",
+        "price": "71.25"
+      },
+      "expect_trades": [
+        {
+          "price": "71.25",
+          "qty": "10"
+        }
+      ]
+    },
+    {
+      "note": "Offer 4.3% above last (71.40 after next fill)",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S9",
+        "participant": "FIRM_D",
+        "symbol": "CL-JAN27",
+        "side": "SELL",
+        "qty": "5",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "74.50"
+      }
+    },
+    {
+      "note": "Sweep 71.40 level then breaker trips at 74.50",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B6",
+        "participant": "FIRM_I",
+        "symbol": "CL-JAN27",
+        "side": "BUY",
+        "qty": "20",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "75.00"
+      },
+      "expect_trades": [
+        {
+          "price": "71.4",
+          "qty": "3"
+        },
+        {
+          "price": "71.4",
+          "qty": "10"
+        }
+      ],
+      "expect": [
+        {
+          "type": "Alert",
+          "kind": "CIRCUIT_BREAKER"
+        }
+      ]
+    },
+    {
+      "check_phase": {
+        "symbol": "CL-JAN27",
+        "phase": "VOLATILITY_AUCTION"
+      }
+    },
+    {
+      "note": "Volatility auction uncross after 120s",
+      "do": {
+        "type": "AdvanceTime",
+        "seconds": "121"
+      },
+      "expect_trades": [
+        {
+          "price": "75.0",
+          "qty": "5"
+        }
+      ]
+    },
+    {
+      "check_order": {
+        "participant": "FIRM_I",
+        "cl_ord_id": "B6",
+        "status": "PARTIALLY_FILLED",
+        "cum_qty": "18",
+        "leaves_qty": "2"
+      }
+    },
+    {
+      "do": {
+        "type": "SetPhase",
+        "schedule": "COMMODITY_FUT",
+        "phase": "POST_CLOSE"
+      },
+      "expect_no_trades": true
+    },
+    {
+      "note": "Close expires DAY orders",
+      "do": {
+        "type": "SetPhase",
+        "schedule": "COMMODITY_FUT",
+        "phase": "CLOSED"
+      },
+      "expect": [
+        {
+          "cl_ord_id": "B6",
+          "exec_type": "EXPIRED"
+        }
+      ]
+    },
+    {
+      "check_book": {
+        "symbol": "CL-JAN27",
+        "bids": [],
+        "asks": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="640" viewBox="0 0 1000 640" role="img" aria-label="Auction uncross - everyone trades at one price">
+<title>Auction uncross - everyone trades at one price</title>
+<defs><marker id="arr475569" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker></defs>
+<rect width="1000" height="640" fill="#ffffff"/>
+<text x="40" y="42" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#0f172a" text-anchor="start">Auctions: orders collect first, then everyone trades at one price</text>
+<text x="40" y="66" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#475569" text-anchor="start">Example: the one-off art print ART-PRINT-0001 during the 09:00-10:00 pre-open</text>
+<rect x="40" y="96" width="330" height="420" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="58" y="122" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1e40af" text-anchor="start">1 · Orders collected (09:00-10:00)</text>
+<text x="58" y="142" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#475569" text-anchor="start">Nothing trades yet, so buyers may bid above</text>
+<text x="58" y="158" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#475569" text-anchor="start">the seller&#x27;s price (the book is &#x27;crossed&#x27;).</text>
+<text x="110" y="190" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#166534" text-anchor="middle">BUYERS</text>
+<text x="205" y="190" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#475569" text-anchor="middle">PRICE</text>
+<text x="300" y="190" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#991b1b" text-anchor="middle">SELLER</text>
+<rect x="60" y="204" width="290" height="52" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="205" y="236" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#0f172a" text-anchor="middle">£4,500</text>
+<rect x="70" y="216" width="82" height="28" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="1"/>
+<text x="111" y="235" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#166534" text-anchor="middle">COLL_B</text>
+<rect x="60" y="264" width="290" height="52" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="205" y="296" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#0f172a" text-anchor="middle">£4,450</text>
+<rect x="70" y="276" width="82" height="28" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="1"/>
+<text x="111" y="295" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#166534" text-anchor="middle">COLL_A</text>
+<rect x="60" y="324" width="290" height="52" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="205" y="356" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#0f172a" text-anchor="middle">£4,400</text>
+<rect x="258" y="336" width="84" height="28" rx="14" fill="#fef2f2" stroke="#dc2626" stroke-width="1"/>
+<text x="300" y="355" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#991b1b" text-anchor="middle">OWNER_1</text>
+<rect x="60" y="384" width="290" height="52" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="205" y="416" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#0f172a" text-anchor="middle">£4,380</text>
+<rect x="70" y="396" width="82" height="28" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="1"/>
+<text x="111" y="415" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#166534" text-anchor="middle">COLL_C</text>
+<text x="58" y="460" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#475569" text-anchor="start">Each order is for exactly 1 item</text>
+<text x="58" y="477" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#475569" text-anchor="start">(a unique item cannot be split).</text>
+<line x1="372" y1="300" x2="394" y2="300" stroke="#475569" stroke-width="2" marker-end="url(#arr475569)"/>
+<rect x="396" y="96" width="564" height="420" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="414" y="122" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1e40af" text-anchor="start">2 · At 10:00 the engine tests every price</text>
+<text x="414" y="154" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#475569" text-anchor="start">Price</text>
+<text x="488" y="154" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#475569" text-anchor="start">Buyers willing</text>
+<text x="600" y="154" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#475569" text-anchor="start">Sellers willing</text>
+<text x="720" y="154" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#475569" text-anchor="start">Items traded</text>
+<text x="828" y="154" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#475569" text-anchor="start">Left over</text>
+<text x="488" y="170" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="400" fill="#475569" text-anchor="start">(bid ≥ price)</text>
+<text x="600" y="170" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="400" fill="#475569" text-anchor="start">(ask ≤ price)</text>
+<rect x="406" y="182" width="544" height="34" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="418" y="204" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0f172a" text-anchor="start">£4,380</text>
+<text x="492" y="204" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0f172a" text-anchor="start">3</text>
+<text x="604" y="204" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0f172a" text-anchor="start">0</text>
+<text x="724" y="204" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0f172a" text-anchor="start">0</text>
+<text x="832" y="204" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0f172a" text-anchor="start">3 buyers</text>
+<rect x="406" y="222" width="544" height="34" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="418" y="244" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0f172a" text-anchor="start">£4,400</text>
+<text x="492" y="244" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0f172a" text-anchor="start">2</text>
+<text x="604" y="244" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0f172a" text-anchor="start">1</text>
+<text x="724" y="244" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0f172a" text-anchor="start">1</text>
+<text x="832" y="244" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0f172a" text-anchor="start">1 buyer</text>
+<rect x="406" y="262" width="544" height="34" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="418" y="284" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0f172a" text-anchor="start">£4,450</text>
+<text x="492" y="284" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0f172a" text-anchor="start">2</text>
+<text x="604" y="284" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0f172a" text-anchor="start">1</text>
+<text x="724" y="284" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0f172a" text-anchor="start">1</text>
+<text x="832" y="284" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0f172a" text-anchor="start">1 buyer</text>
+<rect x="406" y="302" width="544" height="34" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+<text x="418" y="324" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#166534" text-anchor="start">£4,500</text>
+<text x="492" y="324" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#166534" text-anchor="start">1</text>
+<text x="604" y="324" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#166534" text-anchor="start">1</text>
+<text x="724" y="324" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#166534" text-anchor="start">1</text>
+<text x="832" y="324" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#166534" text-anchor="start">0  ✓ chosen</text>
+<text x="414" y="368" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="start">How the price is chosen (each rule only breaks ties left by the one before):</text>
+<text x="414" y="392" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#0f172a" text-anchor="start">1. Trade the most items → £4,400, £4,450 and £4,500 tie (1 each)</text>
+<text x="414" y="414" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#0f172a" text-anchor="start">2. Leave the fewest unmatched → £4,500 wins (0 left over)</text>
+<text x="414" y="436" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#0f172a" text-anchor="start">3. Still tied? Follow the pressure: more buyers → the higher price</text>
+<text x="414" y="458" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#0f172a" text-anchor="start">4. Still tied? Pick the price closest to the reference price</text>
+<line x1="500" y1="516" x2="500" y2="540" stroke="#475569" stroke-width="2" marker-end="url(#arr475569)"/>
+<rect x="40" y="542" width="920" height="80" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+<text x="58" y="568" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#166534" text-anchor="start">3 · Result at 10:00</text>
+<text x="58" y="590" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#0f172a" text-anchor="start">COLL_B buys the print from OWNER_1 at £4,500 (one price for the whole auction). COLL_A (£4,450) and COLL_C (£4,380) keep</text>
+<text x="58" y="609" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#0f172a" text-anchor="start">waiting as bids in continuous trading. They are DAY orders, so they expire at 20:30. The same method runs the 20:05 closing auction.</text>
+</svg>

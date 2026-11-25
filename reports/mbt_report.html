@@ -1,0 +1,505 @@
+<!DOCTYPE html><html><head><meta charset='utf-8'><title>ModelEx MBT Report</title>
+<meta name='viewport' content='width=device-width,initial-scale=1'><style>
+body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#1d2433;max-width:1100px;margin:32px auto;padding:0 20px;line-height:1.45}
+h1{font-size:26px;margin-bottom:4px}h2{font-size:20px;margin-top:36px;border-bottom:2px solid #e3e7ef;padding-bottom:6px}
+h3{font-size:16px;margin-top:22px;color:#33415c}p{margin:8px 0}
+table{border-collapse:collapse;width:100%;margin:10px 0 16px;font-size:13px}
+th{background:#f3f5f9;text-align:left;font-weight:600}th,td{border:1px solid #e3e7ef;padding:5px 8px;vertical-align:top}
+td.pass{color:#0b7a3e;font-weight:600}td.fail{color:#b42318;font-weight:600}
+.verdict{display:inline-block;padding:6px 14px;border-radius:6px;font-weight:700;margin:8px 0}
+.v-pass{background:#e7f6ec;color:#0b7a3e}.v-fail{background:#fdecea;color:#b42318}
+@media print{body{margin:0;max-width:none}h2{page-break-after:avoid}table{page-break-inside:auto}tr{page-break-inside:avoid}}
+</style></head><body>
+<h1>ModelEx - Model-Based Test Report</h1>
+<p>Exchange: <strong>ModelEx Multi-Asset Demo Exchange</strong> (XMDL) · Trading date 2026-11-25 · Seed 20261125 · 5,000 generated steps per asset class · Generated 2026-11-25 09:02</p>
+<div class='verdict v-pass'>Overall result: PASS</div>
+<h2>Acceptance summary</h2>
+<table><tr><th>Asset class</th><th>Scenario steps passed</th><th>Invariant violations</th><th>Protocol msgs / mismatches</th><th>Validation rules exercised</th><th>Differential verdicts as expected</th><th>Result</th></tr>
+<tr><td>EQUITY</td><td>65/65</td><td>0</td><td>13,428 / 0</td><td>13/13</td><td>6/6</td><td class='pass'>PASS</td></tr>
+<tr><td>CRYPTO</td><td>38/38</td><td>0</td><td>13,564 / 0</td><td>13/13</td><td>6/6</td><td class='pass'>PASS</td></tr>
+<tr><td>COMMODITY</td><td>31/31</td><td>0</td><td>13,560 / 0</td><td>13/13</td><td>6/6</td><td class='pass'>PASS</td></tr>
+<tr><td>COLLECTIBLE</td><td>33/33</td><td>0</td><td>11,968 / 0</td><td>15/15</td><td>6/6</td><td class='pass'>PASS</td></tr>
+</table>
+<p>Acceptance criteria: every scenario expectation met; zero invariant violations across scenario and simulation; every message survives a wire-protocol round trip; every reachable validation rule exercised; a clean wire-level SUT agrees with the model on every response, and every non-equivalent mutant is detected.</p>
+<h2>EQUITY</h2>
+<h3>Test order book scenario - Equity order book - full trading day</h3>
+<p>Validation rules (incl. duplicate ClOrdID and duplicate-content rejection), opening auction uncross, price-time priority, amend priority rules, self-trade prevention (cancel resting), IOC/FOK/market behaviour, circuit breaker -&gt; volatility auction, cancel rejects, closing sequence and DAY/GTC expiry. Instruments: VOD.L, AZN.L (banded tick), 7203.T (lot 100), AAPL.OQ (notional cap), SUSP.L (suspended).</p>
+<p><strong>65/65 steps passed</strong>, 15 trades, 0 invariant violations.</p>
+<table><tr><th>#</th><th>Step</th><th>Result</th></tr>
+<tr><td>1</td><td>Pre-open call period starts</td><td class='pass'>PASS</td></tr>
+<tr><td>2</td><td>IOC not allowed in a call phase</td><td class='pass'>PASS</td></tr>
+<tr><td>3</td><td>Off-tick price (tick 0.01)</td><td class='pass'>PASS</td></tr>
+<tr><td>4</td><td>Banded tick table: AZN.L &gt;= 10000 trades in whole pence</td><td class='pass'>PASS</td></tr>
+<tr><td>5</td><td>Round-lot market (lot 100)</td><td class='pass'>PASS</td></tr>
+<tr><td>6</td><td>Suspended instrument</td><td class='pass'>PASS</td></tr>
+<tr><td>7</td><td>Not in golden source</td><td class='pass'>PASS</td></tr>
+<tr><td>8</td><td>Static collar +/-10% of 72.50 =&gt; [65.25, 79.75]</td><td class='pass'>PASS</td></tr>
+<tr><td>9</td><td>Max order size 500,000</td><td class='pass'>PASS</td></tr>
+<tr><td>10</td><td>Notional cap 5m USD (25,000 x 228.40)</td><td class='pass'>PASS</td></tr>
+<tr><td>11</td><td>Market order must not carry a price</td><td class='pass'>PASS</td></tr>
+<tr><td>12</td><td>Limit order needs a price</td><td class='pass'>PASS</td></tr>
+<tr><td>13</td><td>Zero quantity</td><td class='pass'>PASS</td></tr>
+<tr><td>14</td><td>Pre-open book: B1 buy 1000 @ 72.60</td><td class='pass'>PASS</td></tr>
+<tr><td>15</td><td>B2 buy 500 @ 72.50</td><td class='pass'>PASS</td></tr>
+<tr><td>16</td><td>B3 market buy 300 (rests until uncross)</td><td class='pass'>PASS</td></tr>
+<tr><td>17</td><td>S1 sell 600 @ 72.40</td><td class='pass'>PASS</td></tr>
+<tr><td>18</td><td>S2 sell 800 @ 72.50</td><td class='pass'>PASS</td></tr>
+<tr><td>19</td><td>S3 sell 400 @ 72.70</td><td class='pass'>PASS</td></tr>
+<tr><td>20</td><td>Duplicate ClOrdID B1 from FIRM_A rejected</td><td class='pass'>PASS</td></tr>
+<tr><td>21</td><td>Same order content as B2 within 500ms rejected (fat-finger guard)</td><td class='pass'>PASS</td></tr>
+<tr><td>22</td><td>Call book may be crossed</td><td class='pass'>PASS</td></tr>
+<tr><td>23</td><td>Open: uncross at 72.50 (max volume 1400, min imbalance)</td><td class='pass'>PASS</td></tr>
+<tr><td>24</td><td>check auction VOD.L</td><td class='pass'>PASS</td></tr>
+<tr><td>25</td><td>check order B1</td><td class='pass'>PASS</td></tr>
+<tr><td>26</td><td>check order B2</td><td class='pass'>PASS</td></tr>
+<tr><td>27</td><td>check book VOD.L</td><td class='pass'>PASS</td></tr>
+<tr><td>28</td><td>S4 joins 72.70 behind S3</td><td class='pass'>PASS</td></tr>
+<tr><td>29</td><td>S5 sell 300 @ 72.80</td><td class='pass'>PASS</td></tr>
+<tr><td>30</td><td>B4 sweeps: S3 then S4 (time priority) then S5 (price)</td><td class='pass'>PASS</td></tr>
+<tr><td>31</td><td>B5 buy 100 @ 72.40</td><td class='pass'>PASS</td></tr>
+<tr><td>32</td><td>B6 buy 100 @ 72.40 (behind B5)</td><td class='pass'>PASS</td></tr>
+<tr><td>33</td><td>Reduce B5 to 50: keeps priority</td><td class='pass'>PASS</td></tr>
+<tr><td>34</td><td>S6 sells 460: B2 400 @72.50, then B5 50, then B6 10</td><td class='pass'>PASS</td></tr>
+<tr><td>35</td><td>B7 buy 100 @ 72.40 (behind B6)</td><td class='pass'>PASS</td></tr>
+<tr><td>36</td><td>Increase B6 to 200: loses priority</td><td class='pass'>PASS</td></tr>
+<tr><td>37</td><td>S7 sells 150: B7 first now, then B6</td><td class='pass'>PASS</td></tr>
+<tr><td>38</td><td>check order B7</td><td class='pass'>PASS</td></tr>
+<tr><td>39</td><td>Self-trade prevention (CANCEL_RESTING): FIRM_B buy meets own S5</td><td class='pass'>PASS</td></tr>
+<tr><td>40</td><td>check book VOD.L</td><td class='pass'>PASS</td></tr>
+<tr><td>41</td><td>IOC: fill 100, expire remaining 200</td><td class='pass'>PASS</td></tr>
+<tr><td>42</td><td>FOK for 500 when 140 available: expires, no trades</td><td class='pass'>PASS</td></tr>
+<tr><td>43</td><td>FOK for 100: fills in full</td><td class='pass'>PASS</td></tr>
+<tr><td>44</td><td>Market IOC with no offers expires</td><td class='pass'>PASS</td></tr>
+<tr><td>45</td><td>Offer 5.7% away from last (72.40)</td><td class='pass'>PASS</td></tr>
+<tr><td>46</td><td>Buy would print 76.50 &gt; 5% move: circuit breaker, volatility auction</td><td class='pass'>PASS</td></tr>
+<tr><td>47</td><td>check phase VOD.L</td><td class='pass'>PASS</td></tr>
+<tr><td>48</td><td>check book VOD.L</td><td class='pass'>PASS</td></tr>
+<tr><td>49</td><td>Other equities keep trading continuously</td><td class='pass'>PASS</td></tr>
+<tr><td>50</td><td>Auction ends after 120s and uncrosses (buy pressure =&gt; highest price 77.00)</td><td class='pass'>PASS</td></tr>
+<tr><td>51</td><td>check phase VOD.L</td><td class='pass'>PASS</td></tr>
+<tr><td>52</td><td>check order B10</td><td class='pass'>PASS</td></tr>
+<tr><td>53</td><td>Cancel B10</td><td class='pass'>PASS</td></tr>
+<tr><td>54</td><td>Cancel an already-cancelled order</td><td class='pass'>PASS</td></tr>
+<tr><td>55</td><td>Cancel an unknown order</td><td class='pass'>PASS</td></tr>
+<tr><td>56</td><td>Replace qty below filled qty</td><td class='pass'>PASS</td></tr>
+<tr><td>57</td><td>Closing auction call</td><td class='pass'>PASS</td></tr>
+<tr><td>58</td><td>GTC bid survives the close</td><td class='pass'>PASS</td></tr>
+<tr><td>59</td><td>DAY offer</td><td class='pass'>PASS</td></tr>
+<tr><td>60</td><td>Close: uncross (nothing crosses)</td><td class='pass'>PASS</td></tr>
+<tr><td>61</td><td>Market closed: DAY orders expire</td><td class='pass'>PASS</td></tr>
+<tr><td>62</td><td>check book VOD.L</td><td class='pass'>PASS</td></tr>
+<tr><td>63</td><td>Orders rejected while closed</td><td class='pass'>PASS</td></tr>
+<tr><td>64</td><td>Illegal transition CLOSED -&gt; POST_CLOSE is rejected</td><td class='pass'>PASS</td></tr>
+<tr><td>65</td><td>check phase EQUITY_STD</td><td class='pass'>PASS</td></tr>
+</table>
+<h3>Generated trading-day simulation</h3>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Commands</td><td>5,014 (NewOrder 3,821, CancelOrder 581, ReplaceOrder 438, AdvanceTime 161, SetPhase 11, HaltInstrument 1, ResumeInstrument 1)</td></tr>
+<tr><td>Orders accepted / rejected</td><td>2,852 / 969 (25.4% rejected)</td></tr>
+<tr><td>Trades (continuous / auction)</td><td>1,610 (1,272 / 338)</td></tr>
+<tr><td>Execution reports</td><td>TRADE 3,220, NEW 2,852, REJECTED 969, CANCELED 777, REPLACED 373, EXPIRED 270</td></tr>
+<tr><td>Cancel/replace rejects</td><td>UNKNOWN_ORDER 38, EXCHANGE_CLOSED 28, AMEND_NOT_ALLOWED 21, INVALID_TICK 21, TOO_LATE_TO_CANCEL 18, PRICE_OUTSIDE_BAND 1</td></tr>
+<tr><td>Circuit breakers</td><td>6</td></tr>
+<tr><td>Schedule phase path</td><td>PRE_OPEN -&gt; CONTINUOUS -&gt; HALTED -&gt; PRE_OPEN -&gt; CONTINUOUS -&gt; PRE_CLOSE -&gt; POST_CLOSE -&gt; CLOSED</td></tr>
+<tr><td>Illegal transition probes rejected</td><td>3</td></tr>
+<tr><td>Alerts</td><td>LARGE_TRADE 249, CIRCUIT_BREAKER 6, HIGH_REJECT_RATE 5, PHASE_TRANSITION_REJECTED 3, INSTRUMENT_HALT 1</td></tr>
+<tr><td>Protocol round trips (FIX44)</td><td>13,428 messages, 0 mismatches</td></tr>
+<tr><td>Invariant checks</td><td>20 invariants after every step; 0 violations</td></tr>
+<tr><td>Runtime</td><td>1.32s</td></tr>
+</table>
+<table><tr><th>Reject reason</th><th>Count</th></tr>
+<tr><td>EXCHANGE_CLOSED</td><td>357</td></tr>
+<tr><td>DUPLICATE_CL_ORD_ID</td><td>112</td></tr>
+<tr><td>DUPLICATE_ORDER</td><td>79</td></tr>
+<tr><td>MISSING_OR_INVALID_FIELD</td><td>69</td></tr>
+<tr><td>INVALID_QUANTITY</td><td>67</td></tr>
+<tr><td>INSTRUMENT_NOT_TRADABLE</td><td>35</td></tr>
+<tr><td>PRICE_REQUIRED</td><td>35</td></tr>
+<tr><td>TIF_NOT_ALLOWED_IN_PHASE</td><td>33</td></tr>
+<tr><td>INVALID_PRICE</td><td>32</td></tr>
+<tr><td>INVALID_TICK</td><td>31</td></tr>
+<tr><td>PRICE_OUTSIDE_BAND</td><td>28</td></tr>
+<tr><td>QTY_ABOVE_MAX</td><td>23</td></tr>
+<tr><td>UNKNOWN_INSTRUMENT</td><td>23</td></tr>
+<tr><td>PRICE_NOT_ALLOWED</td><td>23</td></tr>
+<tr><td>LOT_SIZE_VIOLATION</td><td>22</td></tr>
+</table>
+<table><tr><th>Symbol</th><th>Open</th><th>High</th><th>Low</th><th>Last</th><th>VWAP</th><th>Volume</th><th>Trades</th><th>CB</th><th>Final bid / ask</th></tr>
+<tr><td>7203.T</td><td>2526</td><td>2659.5</td><td>2385</td><td>2485.5</td><td>2527.10958904</td><td>182500</td><td>264</td><td>0</td><td>2485.5 / 2494.5</td></tr>
+<tr><td>AAPL.OQ</td><td>228.88</td><td>243.38</td><td>228.68</td><td>237.72</td><td>235.1691831</td><td>1420</td><td>233</td><td>1</td><td>236.82 / 240.65</td></tr>
+<tr><td>AZN.L</td><td>11789</td><td>11896</td><td>11692</td><td>11896</td><td>11791.61838101</td><td>1643</td><td>255</td><td>0</td><td>11888 / 11965</td></tr>
+<tr><td>BARC.L</td><td>283.2</td><td>295.2</td><td>274.15</td><td>282.8</td><td>283.21882118</td><td>1756</td><td>286</td><td>2</td><td>281.85 / -</td></tr>
+<tr><td>MSFT.OQ</td><td>417.8</td><td>456.72</td><td>373.68</td><td>391.94</td><td>429.77668233</td><td>2128</td><td>277</td><td>3</td><td>390.08 / 392.12</td></tr>
+<tr><td>VOD.L</td><td>72.87</td><td>74.75</td><td>70.33</td><td>70.33</td><td>72.64272513</td><td>1699</td><td>295</td><td>0</td><td>70.33 / 74.15</td></tr>
+</table>
+<h3>Validation rule coverage</h3>
+<p><strong>13/13</strong> reachable rules produced at least one rejection (scenario + simulation).</p>
+<table><tr><th>Rule</th><th>Rejections</th><th>Note</th></tr>
+<tr><td>REQUIRED_FIELDS</td><td>69</td><td></td></tr>
+<tr><td>DUPLICATE_CL_ORD_ID</td><td>113</td><td></td></tr>
+<tr><td>UNKNOWN_INSTRUMENT</td><td>24</td><td></td></tr>
+<tr><td>INSTRUMENT_STATUS</td><td>36</td><td></td></tr>
+<tr><td>SESSION_PHASE</td><td>392</td><td></td></tr>
+<tr><td>ORDER_TYPE</td><td>0</td><td>every order type is enabled</td></tr>
+<tr><td>TIME_IN_FORCE</td><td>0</td><td>every TIF is enabled</td></tr>
+<tr><td>PRICE_PRESENCE</td><td>92</td><td></td></tr>
+<tr><td>QUANTITY_POSITIVE</td><td>68</td><td></td></tr>
+<tr><td>LOT_SIZE</td><td>23</td><td></td></tr>
+<tr><td>MIN_MAX_QTY</td><td>24</td><td></td></tr>
+<tr><td>TICK_SIZE</td><td>54</td><td></td></tr>
+<tr><td>PRICE_BAND</td><td>30</td><td></td></tr>
+<tr><td>MAX_NOTIONAL</td><td>1</td><td></td></tr>
+<tr><td>DUPLICATE_ORDER</td><td>80</td><td></td></tr>
+</table>
+<h3>Differential testing (simulation trace replayed against SUTs)</h3>
+<table><tr><th>System under test</th><th>Expected</th><th>Outcome</th><th>Responses compared</th><th>First divergence</th></tr>
+<tr><td>Same engine behind FIX44 gateway</td><td>AGREE</td><td class='pass'>AGREE ✓</td><td>8,588</td><td>-</td></tr>
+<tr><td>Mutant: LIFO_MATCHING</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>1,209</td><td>step 754: response #2 (C0000567): ord_status model=PARTIALLY_FILLED sut=FILLED, cl_ord_id model=C0000567 sut=A0000573, participant model=FIRM_C sut=FIRM_A, cum_qty model=2600 sut=500, leaves_qty model=2400 sut=0</td></tr>
+<tr><td>Mutant: NO_DUPLICATE_CLORDID_CHECK</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>285</td><td>step 133: response #0 (C0000004): exec_type model=REJECTED sut=NEW, ord_status model=REJECTED sut=NEW, leaves_qty model=0 sut=10, reject_reason model=DUPLICATE_CL_ORD_ID sut=None</td></tr>
+<tr><td>Mutant: FLAT_TICK_VALIDATION</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>480</td><td>step 215: response #0 (F0000204): kind model=CXL_REJ sut=EXEC, response_to model=REPLACE sut=None, reject_reason model=INVALID_TICK sut=None</td></tr>
+<tr><td>Mutant: BAND_EDGE_OFF_BY_ONE</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>653</td><td>step 120: response #0 (E0000115): exec_type model=NEW sut=REJECTED, ord_status model=NEW sut=REJECTED, leaves_qty model=160 sut=0, reject_reason model=None sut=PRICE_OUTSIDE_BAND</td></tr>
+<tr><td>Mutant: NO_STP</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>1,075</td><td>step 753: response #3 (C0000670): exec_type model=CANCELED sut=TRADE, ord_status model=CANCELED sut=PARTIALLY_FILLED, cl_ord_id model=C0000670 sut=C0000714, orig_cl_ord_id model=C0000265 sut=None, side model=SELL sut=BUY, last_qty model=0 sut=1, last_px model=None sut=229, cum_qty model=0 sut=40, leaves_qty model=0 sut=10</td></tr>
+</table>
+<h2>CRYPTO</h2>
+<h3>Test order book scenario - Crypto order book - 24x7 continuous</h3>
+<p>Fractional quantities (lot 0.0001 BTC), GTC/IOC/FOK only, notional cap, market orders, self-trade prevention (cancel incoming), circuit breaker -&gt; 60s volatility auction, instrument halt/resume and per-participant ClOrdID uniqueness.</p>
+<p><strong>38/38 steps passed</strong>, 8 trades, 0 invariant violations.</p>
+<table><tr><th>#</th><th>Step</th><th>Result</th></tr>
+<tr><td>1</td><td>24x7 venue starts continuous</td><td class='pass'>PASS</td></tr>
+<tr><td>2</td><td>DAY not offered on this venue</td><td class='pass'>PASS</td></tr>
+<tr><td>3</td><td>Below lot size 0.0001</td><td class='pass'>PASS</td></tr>
+<tr><td>4</td><td>Off tick 0.01</td><td class='pass'>PASS</td></tr>
+<tr><td>5</td><td>Above max qty 100</td><td class='pass'>PASS</td></tr>
+<tr><td>6</td><td>Notional 80 x 65,000 = 5.2m &gt; 5m cap</td><td class='pass'>PASS</td></tr>
+<tr><td>7</td><td>Outside +/-20% band</td><td class='pass'>PASS</td></tr>
+<tr><td>8</td><td>ETH lot 0.001</td><td class='pass'>PASS</td></tr>
+<tr><td>9</td><td>Delisted token</td><td class='pass'>PASS</td></tr>
+<tr><td>10</td><td>NewOrder S1</td><td class='pass'>PASS</td></tr>
+<tr><td>11</td><td>NewOrder S2</td><td class='pass'>PASS</td></tr>
+<tr><td>12</td><td>NewOrder S3</td><td class='pass'>PASS</td></tr>
+<tr><td>13</td><td>NewOrder B1</td><td class='pass'>PASS</td></tr>
+<tr><td>14</td><td>NewOrder B2</td><td class='pass'>PASS</td></tr>
+<tr><td>15</td><td>check book BTC-USD</td><td class='pass'>PASS</td></tr>
+<tr><td>16</td><td>IOC taker lifts 0.6: S1 0.5 then S2 0.1 (FIFO)</td><td class='pass'>PASS</td></tr>
+<tr><td>17</td><td>Market sell 1.0 walks the bids</td><td class='pass'>PASS</td></tr>
+<tr><td>18</td><td>B4 takes remaining 0.15 of S2 and rests 0.05</td><td class='pass'>PASS</td></tr>
+<tr><td>19</td><td>STP cancel-incoming: MM_1 buy would hit own S3</td><td class='pass'>PASS</td></tr>
+<tr><td>20</td><td>check book BTC-USD</td><td class='pass'>PASS</td></tr>
+<tr><td>21</td><td>FOK 2.0 &gt; 1.0 available: expires</td><td class='pass'>PASS</td></tr>
+<tr><td>22</td><td>FOK 0.4 fills</td><td class='pass'>PASS</td></tr>
+<tr><td>23</td><td>Amend price on a partially-filled order</td><td class='pass'>PASS</td></tr>
+<tr><td>24</td><td>Amend qty below filled qty</td><td class='pass'>PASS</td></tr>
+<tr><td>25</td><td>Offer 9% above last trade</td><td class='pass'>PASS</td></tr>
+<tr><td>26</td><td>Sweep: fills 0.6 @ 65050 then breaches 8% breaker</td><td class='pass'>PASS</td></tr>
+<tr><td>27</td><td>check phase BTC-USD</td><td class='pass'>PASS</td></tr>
+<tr><td>28</td><td>IOC rejected during auction call</td><td class='pass'>PASS</td></tr>
+<tr><td>29</td><td>60s later the auction uncrosses</td><td class='pass'>PASS</td></tr>
+<tr><td>30</td><td>check auction BTC-USD</td><td class='pass'>PASS</td></tr>
+<tr><td>31</td><td>check phase BTC-USD</td><td class='pass'>PASS</td></tr>
+<tr><td>32</td><td>Regulatory halt of one instrument</td><td class='pass'>PASS</td></tr>
+<tr><td>33</td><td>New orders rejected while halted</td><td class='pass'>PASS</td></tr>
+<tr><td>34</td><td>...but cancels are accepted</td><td class='pass'>PASS</td></tr>
+<tr><td>35</td><td>ETH unaffected</td><td class='pass'>PASS</td></tr>
+<tr><td>36</td><td>ResumeInstrument </td><td class='pass'>PASS</td></tr>
+<tr><td>37</td><td>ClOrdID B1 reused by MM_2: duplicate</td><td class='pass'>PASS</td></tr>
+<tr><td>38</td><td>Same ClOrdID from a different participant is fine</td><td class='pass'>PASS</td></tr>
+</table>
+<h3>Generated trading-day simulation</h3>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Commands</td><td>5,008 (NewOrder 3,731, CancelOrder 620, ReplaceOrder 474, AdvanceTime 176, SetPhase 5, HaltInstrument 1, ResumeInstrument 1)</td></tr>
+<tr><td>Orders accepted / rejected</td><td>3,138 / 593 (15.9% rejected)</td></tr>
+<tr><td>Trades (continuous / auction)</td><td>1,721 (1,721 / 0)</td></tr>
+<tr><td>Execution reports</td><td>TRADE 3,442, NEW 3,138, CANCELED 896, REJECTED 593, REPLACED 425, EXPIRED 133</td></tr>
+<tr><td>Cancel/replace rejects</td><td>UNKNOWN_ORDER 44, INVALID_TICK 30, TOO_LATE_TO_CANCEL 19, EXCHANGE_CLOSED 17, AMEND_NOT_ALLOWED 2</td></tr>
+<tr><td>Circuit breakers</td><td>0</td></tr>
+<tr><td>Schedule phase path</td><td>HALTED -&gt; CONTINUOUS</td></tr>
+<tr><td>Illegal transition probes rejected</td><td>3</td></tr>
+<tr><td>Alerts</td><td>PHASE_TRANSITION_REJECTED 3, INSTRUMENT_HALT 1</td></tr>
+<tr><td>Protocol round trips (JSON)</td><td>13,564 messages, 0 mismatches</td></tr>
+<tr><td>Invariant checks</td><td>20 invariants after every step; 0 violations</td></tr>
+<tr><td>Runtime</td><td>1.48s</td></tr>
+</table>
+<table><tr><th>Reject reason</th><th>Count</th></tr>
+<tr><td>DUPLICATE_CL_ORD_ID</td><td>95</td></tr>
+<tr><td>INVALID_QUANTITY</td><td>77</td></tr>
+<tr><td>EXCHANGE_CLOSED</td><td>66</td></tr>
+<tr><td>MISSING_OR_INVALID_FIELD</td><td>48</td></tr>
+<tr><td>PRICE_OUTSIDE_BAND</td><td>37</td></tr>
+<tr><td>INVALID_TICK</td><td>34</td></tr>
+<tr><td>UNKNOWN_INSTRUMENT</td><td>34</td></tr>
+<tr><td>PRICE_REQUIRED</td><td>31</td></tr>
+<tr><td>QTY_ABOVE_MAX</td><td>30</td></tr>
+<tr><td>LOT_SIZE_VIOLATION</td><td>30</td></tr>
+<tr><td>UNSUPPORTED_TIF</td><td>29</td></tr>
+<tr><td>INVALID_PRICE</td><td>28</td></tr>
+<tr><td>PRICE_NOT_ALLOWED</td><td>28</td></tr>
+<tr><td>INSTRUMENT_NOT_TRADABLE</td><td>26</td></tr>
+</table>
+<table><tr><th>Symbol</th><th>Open</th><th>High</th><th>Low</th><th>Last</th><th>VWAP</th><th>Volume</th><th>Trades</th><th>CB</th><th>Final bid / ask</th></tr>
+<tr><td>BTC-USD</td><td>64760.66</td><td>65861.8</td><td>64760.66</td><td>65571.05</td><td>65423.95419109</td><td>13.4211</td><td>476</td><td>0</td><td>65844.1 / 65870.35</td></tr>
+<tr><td>ETH-USD</td><td>3206.77</td><td>3230.12</td><td>3145.15</td><td>3164.52</td><td>3162.30505534</td><td>110.958</td><td>392</td><td>0</td><td>3157.51 / 3164.52</td></tr>
+<tr><td>SOL-USD</td><td>149.693</td><td>150.551</td><td>148.07</td><td>149.77</td><td>149.51785636</td><td>998.21</td><td>408</td><td>0</td><td>149.018 / 149.77</td></tr>
+<tr><td>XRP-USD</td><td>0.5956</td><td>0.5983</td><td>0.5861</td><td>0.5892</td><td>0.59002047</td><td>2834</td><td>445</td><td>0</td><td>0.5871 / 0.589</td></tr>
+</table>
+<h3>Validation rule coverage</h3>
+<p><strong>13/13</strong> reachable rules produced at least one rejection (scenario + simulation).</p>
+<table><tr><th>Rule</th><th>Rejections</th><th>Note</th></tr>
+<tr><td>REQUIRED_FIELDS</td><td>48</td><td></td></tr>
+<tr><td>DUPLICATE_CL_ORD_ID</td><td>96</td><td></td></tr>
+<tr><td>UNKNOWN_INSTRUMENT</td><td>34</td><td></td></tr>
+<tr><td>INSTRUMENT_STATUS</td><td>27</td><td></td></tr>
+<tr><td>SESSION_PHASE</td><td>68</td><td></td></tr>
+<tr><td>ORDER_TYPE</td><td>0</td><td>every order type is enabled</td></tr>
+<tr><td>TIME_IN_FORCE</td><td>30</td><td></td></tr>
+<tr><td>PRICE_PRESENCE</td><td>87</td><td></td></tr>
+<tr><td>QUANTITY_POSITIVE</td><td>77</td><td></td></tr>
+<tr><td>LOT_SIZE</td><td>32</td><td></td></tr>
+<tr><td>MIN_MAX_QTY</td><td>31</td><td></td></tr>
+<tr><td>TICK_SIZE</td><td>65</td><td></td></tr>
+<tr><td>PRICE_BAND</td><td>38</td><td></td></tr>
+<tr><td>MAX_NOTIONAL</td><td>1</td><td></td></tr>
+</table>
+<h3>Differential testing (simulation trace replayed against SUTs)</h3>
+<table><tr><th>System under test</th><th>Expected</th><th>Outcome</th><th>Responses compared</th><th>First divergence</th></tr>
+<tr><td>Same engine behind JSON gateway</td><td>AGREE</td><td class='pass'>AGREE ✓</td><td>8,739</td><td>-</td></tr>
+<tr><td>Mutant: LIFO_MATCHING</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>1,177</td><td>step 25: response #2 (D0000014): cl_ord_id model=D0000014 sut=D0000015</td></tr>
+<tr><td>Mutant: NO_DUPLICATE_CLORDID_CHECK</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>494</td><td>step 41: response #0 (F0000003): exec_type model=REJECTED sut=NEW, ord_status model=REJECTED sut=NEW, leaves_qty model=0 sut=50, reject_reason model=DUPLICATE_CL_ORD_ID sut=None</td></tr>
+<tr><td>Mutant: FLAT_TICK_VALIDATION</td><td>AGREE</td><td class='pass'>AGREE ✓</td><td>8,739</td><td>all crypto instruments use a single tick size</td></tr>
+<tr><td>Mutant: BAND_EDGE_OFF_BY_ONE</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>241</td><td>step 44: response #0 (C0000041): exec_type model=NEW sut=REJECTED, ord_status model=NEW sut=REJECTED, leaves_qty model=1000 sut=0, reject_reason model=None sut=PRICE_OUTSIDE_BAND</td></tr>
+<tr><td>Mutant: NO_STP</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>91</td><td>step 44: response #1 (C0000041): exec_type model=CANCELED sut=TRADE, ord_status model=CANCELED sut=PARTIALLY_FILLED, last_qty model=0 sut=50, last_px model=None sut=0.5984, cum_qty model=0 sut=50, leaves_qty model=0 sut=950</td></tr>
+</table>
+<h2>COMMODITY</h2>
+<h3>Test order book scenario - Commodity futures order book - pro-rata matching</h3>
+<p>Futures with contract multipliers, expiry checks, notional cap, opening auction, PRO-RATA allocation with FIFO remainder, self-trade prevention (cancel both), FOK, circuit breaker and DAY expiry. Instrument: CL-JAN27 (1,000 bbl, tick 0.01).</p>
+<p><strong>31/31 steps passed</strong>, 16 trades, 0 invariant violations.</p>
+<table><tr><th>#</th><th>Step</th><th>Result</th></tr>
+<tr><td>1</td><td>SetPhase PRE_OPEN</td><td class='pass'>PASS</td></tr>
+<tr><td>2</td><td>Expired contract</td><td class='pass'>PASS</td></tr>
+<tr><td>3</td><td>Notional 150 x 2650.0 x 100 oz = 39.75m &gt; 30m</td><td class='pass'>PASS</td></tr>
+<tr><td>4</td><td>Max 500 lots</td><td class='pass'>PASS</td></tr>
+<tr><td>5</td><td>Suspended contract</td><td class='pass'>PASS</td></tr>
+<tr><td>6</td><td>Off tick</td><td class='pass'>PASS</td></tr>
+<tr><td>7</td><td>NewOrder B1</td><td class='pass'>PASS</td></tr>
+<tr><td>8</td><td>NewOrder B2</td><td class='pass'>PASS</td></tr>
+<tr><td>9</td><td>NewOrder S1</td><td class='pass'>PASS</td></tr>
+<tr><td>10</td><td>NewOrder S2</td><td class='pass'>PASS</td></tr>
+<tr><td>11</td><td>Open: 71.30 maximises volume (50)</td><td class='pass'>PASS</td></tr>
+<tr><td>12</td><td>check auction CL-JAN27</td><td class='pass'>PASS</td></tr>
+<tr><td>13</td><td>check book CL-JAN27</td><td class='pass'>PASS</td></tr>
+<tr><td>14</td><td>Level 71.40: 10 / 30 / 60 lots</td><td class='pass'>PASS</td></tr>
+<tr><td>15</td><td>NewOrder S4</td><td class='pass'>PASS</td></tr>
+<tr><td>16</td><td>NewOrder S5</td><td class='pass'>PASS</td></tr>
+<tr><td>17</td><td>Buy 100: 50 @ 71.30, then 50 shared pro-rata 5/15/30</td><td class='pass'>PASS</td></tr>
+<tr><td>18</td><td>Buy 7 vs 5/15/30: floor shares 0/2/4, remainder 1 to oldest (S3)</td><td class='pass'>PASS</td></tr>
+<tr><td>19</td><td>STP cancel-both: FIRM_G buy allocated against own S5</td><td class='pass'>PASS</td></tr>
+<tr><td>20</td><td>check book CL-JAN27</td><td class='pass'>PASS</td></tr>
+<tr><td>21</td><td>Market sell 20 hits B2</td><td class='pass'>PASS</td></tr>
+<tr><td>22</td><td>FOK 50 vs 10 available: expires</td><td class='pass'>PASS</td></tr>
+<tr><td>23</td><td>FOK 10 fills</td><td class='pass'>PASS</td></tr>
+<tr><td>24</td><td>Offer 4.3% above last (71.40 after next fill)</td><td class='pass'>PASS</td></tr>
+<tr><td>25</td><td>Sweep 71.40 level then breaker trips at 74.50</td><td class='pass'>PASS</td></tr>
+<tr><td>26</td><td>check phase CL-JAN27</td><td class='pass'>PASS</td></tr>
+<tr><td>27</td><td>Volatility auction uncross after 120s</td><td class='pass'>PASS</td></tr>
+<tr><td>28</td><td>check order B6</td><td class='pass'>PASS</td></tr>
+<tr><td>29</td><td>SetPhase POST_CLOSE</td><td class='pass'>PASS</td></tr>
+<tr><td>30</td><td>Close expires DAY orders</td><td class='pass'>PASS</td></tr>
+<tr><td>31</td><td>check book CL-JAN27</td><td class='pass'>PASS</td></tr>
+</table>
+<h3>Generated trading-day simulation</h3>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Commands</td><td>5,013 (NewOrder 3,802, CancelOrder 580, ReplaceOrder 458, AdvanceTime 161, SetPhase 10, HaltInstrument 1, ResumeInstrument 1)</td></tr>
+<tr><td>Orders accepted / rejected</td><td>2,932 / 870 (22.9% rejected)</td></tr>
+<tr><td>Trades (continuous / auction)</td><td>1,550 (1,378 / 172)</td></tr>
+<tr><td>Execution reports</td><td>TRADE 3,100, NEW 2,932, CANCELED 1,034, REJECTED 870, REPLACED 380, EXPIRED 260</td></tr>
+<tr><td>Cancel/replace rejects</td><td>UNKNOWN_ORDER 40, EXCHANGE_CLOSED 35, INVALID_TICK 27, AMEND_NOT_ALLOWED 21, TOO_LATE_TO_CANCEL 21</td></tr>
+<tr><td>Circuit breakers</td><td>1</td></tr>
+<tr><td>Schedule phase path</td><td>PRE_OPEN -&gt; CONTINUOUS -&gt; HALTED -&gt; PRE_OPEN -&gt; CONTINUOUS -&gt; POST_CLOSE -&gt; CLOSED</td></tr>
+<tr><td>Illegal transition probes rejected</td><td>3</td></tr>
+<tr><td>Alerts</td><td>LARGE_TRADE 136, HIGH_REJECT_RATE 5, PHASE_TRANSITION_REJECTED 3, CIRCUIT_BREAKER 1, INSTRUMENT_HALT 1</td></tr>
+<tr><td>Protocol round trips (FIX44)</td><td>13,560 messages, 0 mismatches</td></tr>
+<tr><td>Invariant checks</td><td>20 invariants after every step; 0 violations</td></tr>
+<tr><td>Runtime</td><td>1.39s</td></tr>
+</table>
+<table><tr><th>Reject reason</th><th>Count</th></tr>
+<tr><td>EXCHANGE_CLOSED</td><td>378</td></tr>
+<tr><td>DUPLICATE_CL_ORD_ID</td><td>113</td></tr>
+<tr><td>INVALID_QUANTITY</td><td>62</td></tr>
+<tr><td>MISSING_OR_INVALID_FIELD</td><td>47</td></tr>
+<tr><td>INVALID_PRICE</td><td>34</td></tr>
+<tr><td>INVALID_TICK</td><td>34</td></tr>
+<tr><td>QTY_ABOVE_MAX</td><td>31</td></tr>
+<tr><td>UNKNOWN_INSTRUMENT</td><td>30</td></tr>
+<tr><td>PRICE_REQUIRED</td><td>26</td></tr>
+<tr><td>PRICE_NOT_ALLOWED</td><td>24</td></tr>
+<tr><td>TIF_NOT_ALLOWED_IN_PHASE</td><td>22</td></tr>
+<tr><td>INSTRUMENT_EXPIRED</td><td>18</td></tr>
+<tr><td>LOT_SIZE_VIOLATION</td><td>18</td></tr>
+<tr><td>PRICE_OUTSIDE_BAND</td><td>18</td></tr>
+<tr><td>INSTRUMENT_NOT_TRADABLE</td><td>15</td></tr>
+</table>
+<table><tr><th>Symbol</th><th>Open</th><th>High</th><th>Low</th><th>Last</th><th>VWAP</th><th>Volume</th><th>Trades</th><th>CB</th><th>Final bid / ask</th></tr>
+<tr><td>AH-3M</td><td>2599</td><td>2621.5</td><td>2586</td><td>2596</td><td>2603.05359477</td><td>2295</td><td>425</td><td>0</td><td>2596 / 2608.5</td></tr>
+<tr><td>CL-JAN27</td><td>68.03</td><td>78.37</td><td>67.85</td><td>75.13</td><td>72.34164271</td><td>2435</td><td>390</td><td>1</td><td>75.11 / 75.49</td></tr>
+<tr><td>GC-FEB27</td><td>2673.7</td><td>2768.2</td><td>2663</td><td>2677.8</td><td>2690.47849939</td><td>2479</td><td>367</td><td>0</td><td>2683.6 / 2699.2</td></tr>
+<tr><td>ZW-MAR27</td><td>551.75</td><td>554.5</td><td>547.75</td><td>549.75</td><td>551.03231018</td><td>1857</td><td>368</td><td>0</td><td>549.75 / 553</td></tr>
+</table>
+<h3>Validation rule coverage</h3>
+<p><strong>13/13</strong> reachable rules produced at least one rejection (scenario + simulation).</p>
+<table><tr><th>Rule</th><th>Rejections</th><th>Note</th></tr>
+<tr><td>REQUIRED_FIELDS</td><td>47</td><td></td></tr>
+<tr><td>DUPLICATE_CL_ORD_ID</td><td>113</td><td></td></tr>
+<tr><td>UNKNOWN_INSTRUMENT</td><td>30</td><td></td></tr>
+<tr><td>INSTRUMENT_STATUS</td><td>16</td><td></td></tr>
+<tr><td>INSTRUMENT_EXPIRY</td><td>19</td><td></td></tr>
+<tr><td>SESSION_PHASE</td><td>400</td><td></td></tr>
+<tr><td>ORDER_TYPE</td><td>0</td><td>every order type is enabled</td></tr>
+<tr><td>TIME_IN_FORCE</td><td>0</td><td>every TIF is enabled</td></tr>
+<tr><td>PRICE_PRESENCE</td><td>84</td><td></td></tr>
+<tr><td>QUANTITY_POSITIVE</td><td>62</td><td></td></tr>
+<tr><td>LOT_SIZE</td><td>18</td><td></td></tr>
+<tr><td>MIN_MAX_QTY</td><td>32</td><td></td></tr>
+<tr><td>TICK_SIZE</td><td>62</td><td></td></tr>
+<tr><td>PRICE_BAND</td><td>18</td><td></td></tr>
+<tr><td>MAX_NOTIONAL</td><td>1</td><td></td></tr>
+</table>
+<h3>Differential testing (simulation trace replayed against SUTs)</h3>
+<table><tr><th>System under test</th><th>Expected</th><th>Outcome</th><th>Responses compared</th><th>First divergence</th></tr>
+<tr><td>Same engine behind FIX44 gateway</td><td>AGREE</td><td class='pass'>AGREE ✓</td><td>8,720</td><td>-</td></tr>
+<tr><td>Mutant: LIFO_MATCHING</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>1,203</td><td>step 828: response #1 (E0000780): ord_status model=PARTIALLY_FILLED sut=FILLED, last_qty model=3 sut=5, cum_qty model=3 sut=5, leaves_qty model=2 sut=0</td></tr>
+<tr><td>Mutant: NO_DUPLICATE_CLORDID_CHECK</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>215</td><td>step 56: response #0 (D0000034): reject_reason model=DUPLICATE_CL_ORD_ID sut=EXCHANGE_CLOSED</td></tr>
+<tr><td>Mutant: FLAT_TICK_VALIDATION</td><td>AGREE</td><td class='pass'>AGREE ✓</td><td>8,720</td><td>all futures use a single tick size</td></tr>
+<tr><td>Mutant: BAND_EDGE_OFF_BY_ONE</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>638</td><td>step 218: response #0 (E0000206): exec_type model=NEW sut=REJECTED, ord_status model=NEW sut=REJECTED, leaves_qty model=10 sut=0, reject_reason model=None sut=PRICE_OUTSIDE_BAND</td></tr>
+<tr><td>Mutant: NO_STP</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>1,117</td><td>step 826: response #1 (F0000652): exec_type model=CANCELED sut=TRADE, ord_status model=CANCELED sut=PARTIALLY_FILLED, cl_ord_id model=F0000652 sut=F0000778, side model=BUY sut=SELL, last_qty model=0 sut=3, last_px model=None sut=68.02, cum_qty model=0 sut=3, leaves_qty model=0 sut=47</td></tr>
+</table>
+<h2>COLLECTIBLE</h2>
+<h3>Test order book scenario - Collectibles order book - unique, fungible and fractional items</h3>
+<p>Limit-only, DAY/GTC market for collectibles. A unique art print sold by auction, fractional units of a classic car traded continuously, cases of wine with self-trade prevention and a circuit breaker, a 2-second duplicate-order guard, and GTC persistence through the close.</p>
+<p><strong>33/33 steps passed</strong>, 7 trades, 0 invariant violations.</p>
+<table><tr><th>#</th><th>Step</th><th>Result</th></tr>
+<tr><td>1</td><td>SetPhase PRE_OPEN</td><td class='pass'>PASS</td></tr>
+<tr><td>2</td><td>Unique item: only 1 unit can trade</td><td class='pass'>PASS</td></tr>
+<tr><td>3</td><td>Market orders not offered</td><td class='pass'>PASS</td></tr>
+<tr><td>4</td><td>Suspended pending authentication</td><td class='pass'>PASS</td></tr>
+<tr><td>5</td><td>Tick 5 above 1,000</td><td class='pass'>PASS</td></tr>
+<tr><td>6</td><td>Band +/-25% of 4,500 =&gt; max 5,625</td><td class='pass'>PASS</td></tr>
+<tr><td>7</td><td>Owner offers the print at 4,400</td><td class='pass'>PASS</td></tr>
+<tr><td>8</td><td>NewOrder B1</td><td class='pass'>PASS</td></tr>
+<tr><td>9</td><td>NewOrder B2</td><td class='pass'>PASS</td></tr>
+<tr><td>10</td><td>NewOrder B3</td><td class='pass'>PASS</td></tr>
+<tr><td>11</td><td>Auction: 4,500 executes 1 with zero imbalance; highest bidder wins</td><td class='pass'>PASS</td></tr>
+<tr><td>12</td><td>check auction ART-PRINT-0001</td><td class='pass'>PASS</td></tr>
+<tr><td>13</td><td>check order B2</td><td class='pass'>PASS</td></tr>
+<tr><td>14</td><td>Fractional units</td><td class='pass'>PASS</td></tr>
+<tr><td>15</td><td>NewOrder S3</td><td class='pass'>PASS</td></tr>
+<tr><td>16</td><td>NewOrder B4</td><td class='pass'>PASS</td></tr>
+<tr><td>17</td><td>Identical order within 2s: duplicate guard</td><td class='pass'>PASS</td></tr>
+<tr><td>18</td><td>AdvanceTime </td><td class='pass'>PASS</td></tr>
+<tr><td>19</td><td>After the window it is accepted</td><td class='pass'>PASS</td></tr>
+<tr><td>20</td><td>IOC not offered</td><td class='pass'>PASS</td></tr>
+<tr><td>21</td><td>Asset-class notional cap 100,000 (2,400 x 42.55 = 102,120)</td><td class='pass'>PASS</td></tr>
+<tr><td>22</td><td>NewOrder W1</td><td class='pass'>PASS</td></tr>
+<tr><td>23</td><td>STP cancel-incoming</td><td class='pass'>PASS</td></tr>
+<tr><td>24</td><td>NewOrder W3</td><td class='pass'>PASS</td></tr>
+<tr><td>25</td><td>Offer 15.6% above last</td><td class='pass'>PASS</td></tr>
+<tr><td>26</td><td>Breaker (15%) trips after the 3,200 level is consumed</td><td class='pass'>PASS</td></tr>
+<tr><td>27</td><td>Uncross after 300s: tie broken toward reference (last trade 3,200) =&gt; 3,700</td><td class='pass'>PASS</td></tr>
+<tr><td>28</td><td>SetPhase PRE_CLOSE</td><td class='pass'>PASS</td></tr>
+<tr><td>29</td><td>SetPhase POST_CLOSE</td><td class='pass'>PASS</td></tr>
+<tr><td>30</td><td>DAY bids on the print expire; GTC fractional bid survives</td><td class='pass'>PASS</td></tr>
+<tr><td>31</td><td>check book ART-PRINT-0001</td><td class='pass'>PASS</td></tr>
+<tr><td>32</td><td>check book FRAC-CAR-1962-GT</td><td class='pass'>PASS</td></tr>
+<tr><td>33</td><td>NewOrder X7</td><td class='pass'>PASS</td></tr>
+</table>
+<h3>Generated trading-day simulation</h3>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Commands</td><td>5,014 (NewOrder 3,679, CancelOrder 639, ReplaceOrder 510, AdvanceTime 173, SetPhase 11, HaltInstrument 1, ResumeInstrument 1)</td></tr>
+<tr><td>Orders accepted / rejected</td><td>2,744 / 935 (25.4% rejected)</td></tr>
+<tr><td>Trades (continuous / auction)</td><td>871 (628 / 243)</td></tr>
+<tr><td>Execution reports</td><td>NEW 2,744, TRADE 1,742, REJECTED 935, CANCELED 701, EXPIRED 452, REPLACED 431</td></tr>
+<tr><td>Cancel/replace rejects</td><td>EXCHANGE_CLOSED 40, UNKNOWN_ORDER 32, INVALID_TICK 24, AMEND_NOT_ALLOWED 20, TOO_LATE_TO_CANCEL 16, NOTIONAL_LIMIT_EXCEEDED 3</td></tr>
+<tr><td>Circuit breakers</td><td>0</td></tr>
+<tr><td>Schedule phase path</td><td>PRE_OPEN -&gt; CONTINUOUS -&gt; HALTED -&gt; PRE_OPEN -&gt; CONTINUOUS -&gt; PRE_CLOSE -&gt; POST_CLOSE -&gt; CLOSED</td></tr>
+<tr><td>Illegal transition probes rejected</td><td>3</td></tr>
+<tr><td>Alerts</td><td>HIGH_REJECT_RATE 6, PHASE_TRANSITION_REJECTED 3, INSTRUMENT_HALT 1</td></tr>
+<tr><td>Protocol round trips (JSON)</td><td>11,968 messages, 0 mismatches</td></tr>
+<tr><td>Invariant checks</td><td>20 invariants after every step; 0 violations</td></tr>
+<tr><td>Runtime</td><td>1.68s</td></tr>
+</table>
+<table><tr><th>Reject reason</th><th>Count</th></tr>
+<tr><td>EXCHANGE_CLOSED</td><td>334</td></tr>
+<tr><td>DUPLICATE_ORDER</td><td>114</td></tr>
+<tr><td>DUPLICATE_CL_ORD_ID</td><td>97</td></tr>
+<tr><td>UNSUPPORTED_ORDER_TYPE</td><td>55</td></tr>
+<tr><td>INSTRUMENT_NOT_TRADABLE</td><td>47</td></tr>
+<tr><td>INVALID_QUANTITY</td><td>45</td></tr>
+<tr><td>LOT_SIZE_VIOLATION</td><td>34</td></tr>
+<tr><td>MISSING_OR_INVALID_FIELD</td><td>31</td></tr>
+<tr><td>INVALID_PRICE</td><td>30</td></tr>
+<tr><td>PRICE_REQUIRED</td><td>28</td></tr>
+<tr><td>UNKNOWN_INSTRUMENT</td><td>27</td></tr>
+<tr><td>PRICE_OUTSIDE_BAND</td><td>24</td></tr>
+<tr><td>QTY_ABOVE_MAX</td><td>22</td></tr>
+<tr><td>UNSUPPORTED_TIF</td><td>20</td></tr>
+<tr><td>INVALID_TICK</td><td>15</td></tr>
+<tr><td>TIF_NOT_ALLOWED_IN_PHASE</td><td>12</td></tr>
+</table>
+<table><tr><th>Symbol</th><th>Open</th><th>High</th><th>Low</th><th>Last</th><th>VWAP</th><th>Volume</th><th>Trades</th><th>CB</th><th>Final bid / ask</th></tr>
+<tr><td>ART-PRINT-0001</td><td>4465</td><td>4480</td><td>4455</td><td>4470</td><td>4466.26262626</td><td>99</td><td>99</td><td>0</td><td>4465 / 4475</td></tr>
+<tr><td>COIN-SOV-1911-MS65</td><td>656.5</td><td>661</td><td>656.5</td><td>661</td><td>659.09527559</td><td>1270</td><td>215</td><td>0</td><td>660 / 661</td></tr>
+<tr><td>FRAC-CAR-1962-GT</td><td>47.8</td><td>48.02</td><td>47.72</td><td>47.91</td><td>47.88176056</td><td>1846</td><td>243</td><td>0</td><td>47.86 / 47.91</td></tr>
+<tr><td>WATCH-CHR-0007</td><td>28750</td><td>28750</td><td>28500</td><td>28600</td><td>28606.8627451</td><td>102</td><td>102</td><td>0</td><td>28600 / 28650</td></tr>
+<tr><td>WINE-BDX-2010-CS12</td><td>2980</td><td>2995</td><td>2980</td><td>2995</td><td>2988.7755102</td><td>1078</td><td>212</td><td>0</td><td>2980 / 2995</td></tr>
+</table>
+<h3>Validation rule coverage</h3>
+<p><strong>15/15</strong> reachable rules produced at least one rejection (scenario + simulation).</p>
+<table><tr><th>Rule</th><th>Rejections</th><th>Note</th></tr>
+<tr><td>REQUIRED_FIELDS</td><td>31</td><td></td></tr>
+<tr><td>DUPLICATE_CL_ORD_ID</td><td>97</td><td></td></tr>
+<tr><td>UNKNOWN_INSTRUMENT</td><td>27</td><td></td></tr>
+<tr><td>INSTRUMENT_STATUS</td><td>48</td><td></td></tr>
+<tr><td>SESSION_PHASE</td><td>347</td><td></td></tr>
+<tr><td>ORDER_TYPE</td><td>56</td><td></td></tr>
+<tr><td>TIME_IN_FORCE</td><td>21</td><td></td></tr>
+<tr><td>PRICE_PRESENCE</td><td>58</td><td></td></tr>
+<tr><td>QUANTITY_POSITIVE</td><td>45</td><td></td></tr>
+<tr><td>LOT_SIZE</td><td>34</td><td></td></tr>
+<tr><td>MIN_MAX_QTY</td><td>23</td><td></td></tr>
+<tr><td>UNIQUE_ITEM</td><td>0</td><td>shadowed by MIN_MAX_QTY (unique items have max_qty 1); defence in depth</td></tr>
+<tr><td>TICK_SIZE</td><td>40</td><td></td></tr>
+<tr><td>PRICE_BAND</td><td>25</td><td></td></tr>
+<tr><td>MAX_NOTIONAL</td><td>4</td><td></td></tr>
+<tr><td>DUPLICATE_ORDER</td><td>115</td><td></td></tr>
+</table>
+<h3>Differential testing (simulation trace replayed against SUTs)</h3>
+<table><tr><th>System under test</th><th>Expected</th><th>Outcome</th><th>Responses compared</th><th>First divergence</th></tr>
+<tr><td>Same engine behind JSON gateway</td><td>AGREE</td><td class='pass'>AGREE ✓</td><td>7,140</td><td>-</td></tr>
+<tr><td>Mutant: LIFO_MATCHING</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>974</td><td>step 758: response #2 (E0000216): cl_ord_id model=E0000216 sut=E0000712, orig_cl_ord_id model=E0000195 sut=None</td></tr>
+<tr><td>Mutant: NO_DUPLICATE_CLORDID_CHECK</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>139</td><td>step 1: response #0 (D0000001): reject_reason model=DUPLICATE_CL_ORD_ID sut=EXCHANGE_CLOSED</td></tr>
+<tr><td>Mutant: FLAT_TICK_VALIDATION</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>890</td><td>step 174: response #0 (D0000161): kind model=CXL_REJ sut=EXEC, response_to model=REPLACE sut=None, reject_reason model=INVALID_TICK sut=None</td></tr>
+<tr><td>Mutant: BAND_EDGE_OFF_BY_ONE</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>632</td><td>step 128: response #0 (C0000119): exec_type model=NEW sut=REJECTED, ord_status model=NEW sut=REJECTED, leaves_qty model=5 sut=0, reject_reason model=None sut=PRICE_OUTSIDE_BAND</td></tr>
+<tr><td>Mutant: NO_STP</td><td>KILLED</td><td class='pass'>KILLED ✓</td><td>1,142</td><td>step 845: response #11 (B0000790): exec_type model=CANCELED sut=TRADE, ord_status model=CANCELED sut=PARTIALLY_FILLED, last_qty model=0 sut=3, last_px model=None sut=658, cum_qty model=35 sut=38, leaves_qty model=0 sut=2</td></tr>
+</table>
+<h2>Invariants checked</h2>
+<table><tr><th>Invariant</th><th>Property</th></tr>
+<tr><td>REJECT_HAS_REASON</td><td>Every rejection carries a canonical reject reason and no order id</td></tr>
+<tr><td>STATUS_TRANSITION</td><td>Order status follows the lifecycle state machine; nothing after a terminal state</td></tr>
+<tr><td>DUPLICATE_ACCEPTED</td><td>No two accepted orders/requests share (participant, ClOrdID)</td></tr>
+<tr><td>CUM_QTY</td><td>Cumulative quantity only moves on trades, by exactly last_qty</td></tr>
+<tr><td>QTY_CONSERVATION</td><td>cum_qty + leaves_qty == order qty for live orders; never overfilled</td></tr>
+<tr><td>FOK_ALL_OR_NONE</td><td>Fill-or-kill orders end fully filled or not filled at all</td></tr>
+<tr><td>TRADE_PAIRING</td><td>Every trade has exactly one buy and one sell report with identical qty/price</td></tr>
+<tr><td>LIMIT_PRICE_RESPECTED</td><td>No buy fills above its limit, no sell fills below its limit</td></tr>
+<tr><td>TRADE_ON_TICK_AND_LOT</td><td>Trade prices are on tick and quantities are lot multiples</td></tr>
+<tr><td>AUCTION_SINGLE_PRICE</td><td>All trades in one uncross print at the published auction price</td></tr>
+<tr><td>MATCHING_PHASE</td><td>Continuous trades only in CONTINUOUS from order entry; auction trades only at phase events</td></tr>
+<tr><td>PRICE_TIME_PRIORITY</td><td>Passive fills follow strict price-then-time priority (PRICE_TIME instruments)</td></tr>
+<tr><td>PRICE_PRIORITY</td><td>Aggressive orders sweep best price first</td></tr>
+<tr><td>BOOK_NOT_CROSSED</td><td>Best bid &lt; best ask whenever the instrument is trading continuously (a call-phase book may stay crossed through a halt until it is uncrossed)</td></tr>
+<tr><td>BOOK_ONLY_LIVE</td><td>Only live, well-formed orders rest in the book; every live order rests</td></tr>
+<tr><td>IOC_FOK_NEVER_REST</td><td>IOC/FOK orders never rest</td></tr>
+<tr><td>MARKET_ORDER_RESTING</td><td>Market orders rest only during auction call phases</td></tr>
+<tr><td>DAY_EXPIRED_AT_CLOSE</td><td>No DAY order survives into CLOSED</td></tr>
+<tr><td>UNIQUE_ITEM</td><td>Unique collectibles only ever carry quantity 1</td></tr>
+<tr><td>PHASE_TRANSITION</td><td>Rejected transitions have no effect; applied transitions are legal</td></tr>
+</table>
+</body></html>

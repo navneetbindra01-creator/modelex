@@ -1,0 +1,466 @@
+{
+  "name": "Collectibles order book - unique, fungible and fractional items",
+  "asset_classes": [
+    "COLLECTIBLE"
+  ],
+  "auto_schedule": false,
+  "description": "Limit-only, DAY/GTC market for collectibles. A unique art print sold by auction, fractional units of a classic car traded continuously, cases of wine with self-trade prevention and a circuit breaker, a 2-second duplicate-order guard, and GTC persistence through the close.",
+  "steps": [
+    {
+      "do": {
+        "type": "SetPhase",
+        "schedule": "COLLECTIBLE_DAILY",
+        "phase": "PRE_OPEN"
+      }
+    },
+    {
+      "note": "Unique item: only 1 unit can trade",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X1",
+        "participant": "COLL_A",
+        "symbol": "ART-PRINT-0001",
+        "side": "BUY",
+        "qty": "2",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "4500"
+      },
+      "expect_reject": "QTY_ABOVE_MAX"
+    },
+    {
+      "note": "Market orders not offered",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X2",
+        "participant": "COLL_A",
+        "symbol": "ART-PRINT-0001",
+        "side": "BUY",
+        "qty": "1",
+        "order_type": "MARKET",
+        "tif": "DAY"
+      },
+      "expect_reject": "UNSUPPORTED_ORDER_TYPE"
+    },
+    {
+      "note": "Suspended pending authentication",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X3",
+        "participant": "COLL_A",
+        "symbol": "CARD-ROOKIE-1986",
+        "side": "BUY",
+        "qty": "1",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "1850"
+      },
+      "expect_reject": "INSTRUMENT_NOT_TRADABLE"
+    },
+    {
+      "note": "Tick 5 above 1,000",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X4",
+        "participant": "COLL_A",
+        "symbol": "ART-PRINT-0001",
+        "side": "BUY",
+        "qty": "1",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "4502"
+      },
+      "expect_reject": "INVALID_TICK"
+    },
+    {
+      "note": "Band +/-25% of 4,500 => max 5,625",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X5",
+        "participant": "COLL_A",
+        "symbol": "ART-PRINT-0001",
+        "side": "BUY",
+        "qty": "1",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "5700"
+      },
+      "expect_reject": "PRICE_OUTSIDE_BAND"
+    },
+    {
+      "note": "Owner offers the print at 4,400",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S1",
+        "participant": "OWNER_1",
+        "symbol": "ART-PRINT-0001",
+        "side": "SELL",
+        "qty": "1",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "4400"
+      }
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B1",
+        "participant": "COLL_A",
+        "symbol": "ART-PRINT-0001",
+        "side": "BUY",
+        "qty": "1",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "4450"
+      }
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B2",
+        "participant": "COLL_B",
+        "symbol": "ART-PRINT-0001",
+        "side": "BUY",
+        "qty": "1",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "4500"
+      }
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B3",
+        "participant": "COLL_C",
+        "symbol": "ART-PRINT-0001",
+        "side": "BUY",
+        "qty": "1",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "4380"
+      }
+    },
+    {
+      "note": "Auction: 4,500 executes 1 with zero imbalance; highest bidder wins",
+      "do": {
+        "type": "SetPhase",
+        "schedule": "COLLECTIBLE_DAILY",
+        "phase": "CONTINUOUS"
+      },
+      "expect_trades": [
+        {
+          "price": "4500",
+          "qty": "1"
+        }
+      ]
+    },
+    {
+      "check_auction": {
+        "symbol": "ART-PRINT-0001",
+        "price": "4500",
+        "volume": "1",
+        "imbalance": "0"
+      }
+    },
+    {
+      "check_order": {
+        "participant": "COLL_B",
+        "cl_ord_id": "B2",
+        "status": "FILLED"
+      }
+    },
+    {
+      "note": "Fractional units",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S2",
+        "participant": "FRAC_SELLER_1",
+        "symbol": "FRAC-CAR-1962-GT",
+        "side": "SELL",
+        "qty": "500",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "42.50"
+      }
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "S3",
+        "participant": "FRAC_SELLER_2",
+        "symbol": "FRAC-CAR-1962-GT",
+        "side": "SELL",
+        "qty": "300",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "42.55"
+      }
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B4",
+        "participant": "INV_A",
+        "symbol": "FRAC-CAR-1962-GT",
+        "side": "BUY",
+        "qty": "600",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "42.55"
+      },
+      "expect_trades": [
+        {
+          "price": "42.5",
+          "qty": "500"
+        },
+        {
+          "price": "42.55",
+          "qty": "100"
+        }
+      ]
+    },
+    {
+      "note": "Identical order within 2s: duplicate guard",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B4R",
+        "participant": "INV_A",
+        "symbol": "FRAC-CAR-1962-GT",
+        "side": "BUY",
+        "qty": "600",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "42.55"
+      },
+      "expect_reject": "DUPLICATE_ORDER"
+    },
+    {
+      "do": {
+        "type": "AdvanceTime",
+        "seconds": "3"
+      }
+    },
+    {
+      "note": "After the window it is accepted",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "B4S",
+        "participant": "INV_A",
+        "symbol": "FRAC-CAR-1962-GT",
+        "side": "BUY",
+        "qty": "600",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "42.55"
+      },
+      "expect_trades": [
+        {
+          "price": "42.55",
+          "qty": "200"
+        }
+      ]
+    },
+    {
+      "note": "IOC not offered",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X6",
+        "participant": "INV_A",
+        "symbol": "FRAC-CAR-1962-GT",
+        "side": "BUY",
+        "qty": "10",
+        "order_type": "LIMIT",
+        "tif": "IOC",
+        "price": "42.55"
+      },
+      "expect_reject": "UNSUPPORTED_TIF"
+    },
+    {
+      "note": "Asset-class notional cap 100,000 (2,400 x 42.55 = 102,120)",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X8",
+        "participant": "INV_B",
+        "symbol": "FRAC-CAR-1962-GT",
+        "side": "BUY",
+        "qty": "2400",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "42.55"
+      },
+      "expect_reject": "NOTIONAL_LIMIT_EXCEEDED"
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "W1",
+        "participant": "MERCHANT_1",
+        "symbol": "WINE-BDX-2010-CS12",
+        "side": "SELL",
+        "qty": "5",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "3200"
+      }
+    },
+    {
+      "note": "STP cancel-incoming",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "W2",
+        "participant": "MERCHANT_1",
+        "symbol": "WINE-BDX-2010-CS12",
+        "side": "BUY",
+        "qty": "2",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "3200"
+      },
+      "expect": [
+        {
+          "cl_ord_id": "W2",
+          "exec_type": "CANCELED"
+        }
+      ],
+      "expect_no_trades": true
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "W3",
+        "participant": "BUYER_X",
+        "symbol": "WINE-BDX-2010-CS12",
+        "side": "BUY",
+        "qty": "3",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "3205"
+      },
+      "expect_trades": [
+        {
+          "price": "3200",
+          "qty": "3"
+        }
+      ]
+    },
+    {
+      "note": "Offer 15.6% above last",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "W4",
+        "participant": "MERCHANT_2",
+        "symbol": "WINE-BDX-2010-CS12",
+        "side": "SELL",
+        "qty": "2",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "3700"
+      }
+    },
+    {
+      "note": "Breaker (15%) trips after the 3,200 level is consumed",
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "W5",
+        "participant": "BUYER_Y",
+        "symbol": "WINE-BDX-2010-CS12",
+        "side": "BUY",
+        "qty": "4",
+        "order_type": "LIMIT",
+        "tif": "DAY",
+        "price": "3750"
+      },
+      "expect_trades": [
+        {
+          "price": "3200",
+          "qty": "2"
+        }
+      ],
+      "expect": [
+        {
+          "type": "Alert",
+          "kind": "CIRCUIT_BREAKER"
+        }
+      ]
+    },
+    {
+      "note": "Uncross after 300s: tie broken toward reference (last trade 3,200) => 3,700",
+      "do": {
+        "type": "AdvanceTime",
+        "seconds": "301"
+      },
+      "expect_trades": [
+        {
+          "price": "3700",
+          "qty": "2"
+        }
+      ]
+    },
+    {
+      "do": {
+        "type": "SetPhase",
+        "schedule": "COLLECTIBLE_DAILY",
+        "phase": "PRE_CLOSE"
+      }
+    },
+    {
+      "do": {
+        "type": "SetPhase",
+        "schedule": "COLLECTIBLE_DAILY",
+        "phase": "POST_CLOSE"
+      },
+      "expect_no_trades": true
+    },
+    {
+      "note": "DAY bids on the print expire; GTC fractional bid survives",
+      "do": {
+        "type": "SetPhase",
+        "schedule": "COLLECTIBLE_DAILY",
+        "phase": "CLOSED"
+      },
+      "expect": [
+        {
+          "cl_ord_id": "B1",
+          "exec_type": "EXPIRED"
+        },
+        {
+          "cl_ord_id": "B3",
+          "exec_type": "EXPIRED"
+        }
+      ]
+    },
+    {
+      "check_book": {
+        "symbol": "ART-PRINT-0001",
+        "bids": [],
+        "asks": []
+      }
+    },
+    {
+      "check_book": {
+        "symbol": "FRAC-CAR-1962-GT",
+        "bids": [
+          [
+            "42.55",
+            "400"
+          ]
+        ],
+        "asks": []
+      }
+    },
+    {
+      "do": {
+        "type": "NewOrder",
+        "cl_ord_id": "X7",
+        "participant": "INV_A",
+        "symbol": "FRAC-CAR-1962-GT",
+        "side": "BUY",
+        "qty": "10",
+        "order_type": "LIMIT",
+        "tif": "GTC",
+        "price": "42.55"
+      },
+      "expect_reject": "EXCHANGE_CLOSED"
+    }
+  ]
+}

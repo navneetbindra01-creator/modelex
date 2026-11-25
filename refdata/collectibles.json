@@ -1,0 +1,23 @@
+{
+  "golden_source": "ModelEx Reference Data Golden Source",
+  "asset_class": "COLLECTIBLE",
+  "as_of": "2026-11-25",
+  "_note": "Unique items trade exactly one unit (unique=true). Fractional items trade in whole units of a share register.",
+  "tick_tables": {
+    "COLLECT": [
+      {"from_price": "0",     "tick": "0.01"},
+      {"from_price": "100",   "tick": "0.50"},
+      {"from_price": "1000",  "tick": "5"},
+      {"from_price": "10000", "tick": "50"}
+    ]
+  },
+  "defaults": {"currency": "GBP", "status": "ACTIVE", "tick_table": "COLLECT", "lot_size": "1", "min_qty": "1", "price_band_pct": "25"},
+  "instruments": [
+    {"symbol": "ART-PRINT-0001",     "name": "Limited edition print 1/50",          "unique": true, "max_qty": "1",    "reference_price": "4500",  "certificate": "COA-88213", "custodian": "Vault-LDN-01"},
+    {"symbol": "WATCH-CHR-0007",     "name": "Vintage chronograph, serial 0007",     "unique": true, "max_qty": "1",    "reference_price": "28500", "certificate": "COA-55120", "condition": "Excellent"},
+    {"symbol": "WINE-BDX-2010-CS12", "name": "Bordeaux 2010, case of 12 (in bond)",  "max_qty": "50",                    "reference_price": "3200",  "storage": "Bonded warehouse"},
+    {"symbol": "COIN-SOV-1911-MS65", "name": "1911 gold sovereign, graded MS65",     "max_qty": "100",                   "reference_price": "650.00","grade": "MS65", "grader": "Independent"},
+    {"symbol": "FRAC-CAR-1962-GT",   "name": "Fractional units: 1962 classic GT",    "max_qty": "2500",                  "reference_price": "42.50", "total_units": 10000},
+    {"symbol": "CARD-ROOKIE-1986",   "name": "1986 rookie card, grade 9",            "unique": true, "max_qty": "1",    "reference_price": "1850",  "status": "SUSPENDED", "status_reason": "authentication review"}
+  ]
+}

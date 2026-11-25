@@ -1,0 +1,14 @@
+{
+  "golden_source": "ModelEx Reference Data Golden Source",
+  "asset_class": "CRYPTO",
+  "as_of": "2026-11-25",
+  "_note": "Illustrative reference prices for testing only. Quantities are fractional (lot = minimum increment).",
+  "defaults": {"currency": "USD", "status": "ACTIVE", "price_band_pct": "20"},
+  "instruments": [
+    {"symbol": "BTC-USD",    "name": "Bitcoin / US Dollar",  "base": "BTC", "quote": "USD", "tick_size": "0.01",   "lot_size": "0.0001", "min_qty": "0.0001", "max_qty": "100",     "reference_price": "65000.00"},
+    {"symbol": "ETH-USD",    "name": "Ether / US Dollar",    "base": "ETH", "quote": "USD", "tick_size": "0.01",   "lot_size": "0.001",  "min_qty": "0.001",  "max_qty": "500",     "reference_price": "3200.00"},
+    {"symbol": "SOL-USD",    "name": "Solana / US Dollar",   "base": "SOL", "quote": "USD", "tick_size": "0.001",  "lot_size": "0.01",   "min_qty": "0.01",   "max_qty": "20000",   "reference_price": "150.000"},
+    {"symbol": "XRP-USD",    "name": "XRP / US Dollar",      "base": "XRP", "quote": "USD", "tick_size": "0.0001", "lot_size": "1",      "min_qty": "1",      "max_qty": "1000000", "reference_price": "0.6000"},
+    {"symbol": "DELIST-USD", "name": "Delisted Token / USD", "base": "DLT", "quote": "USD", "tick_size": "0.01",   "lot_size": "1",      "min_qty": "1",      "max_qty": "100000",  "reference_price": "1.00", "status": "DELISTED"}
+  ]
+}

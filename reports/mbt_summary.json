@@ -1,0 +1,543 @@
+{
+  "meta": {
+    "exchange": "ModelEx Multi-Asset Demo Exchange",
+    "mic": "XMDL",
+    "trading_date": "2026-11-25",
+    "seed": 20261125,
+    "steps": 5000,
+    "generated": "2026-11-25 09:02"
+  },
+  "passed": true,
+  "asset_classes": {
+    "EQUITY": {
+      "passed": true,
+      "scenario_steps": [
+        65,
+        65
+      ],
+      "scenario_violations": 0,
+      "sim_violations": 0,
+      "trades": 1610,
+      "rejects": {
+        "EXCHANGE_CLOSED": 357,
+        "MISSING_OR_INVALID_FIELD": 69,
+        "TIF_NOT_ALLOWED_IN_PHASE": 33,
+        "INVALID_TICK": 31,
+        "DUPLICATE_ORDER": 79,
+        "DUPLICATE_CL_ORD_ID": 112,
+        "INSTRUMENT_NOT_TRADABLE": 35,
+        "PRICE_OUTSIDE_BAND": 28,
+        "QTY_ABOVE_MAX": 23,
+        "PRICE_REQUIRED": 35,
+        "UNKNOWN_INSTRUMENT": 23,
+        "LOT_SIZE_VIOLATION": 22,
+        "INVALID_QUANTITY": 67,
+        "INVALID_PRICE": 32,
+        "PRICE_NOT_ALLOWED": 23
+      },
+      "protocol_mismatches": 0,
+      "coverage": {
+        "rules": [
+          "REQUIRED_FIELDS",
+          "DUPLICATE_CL_ORD_ID",
+          "UNKNOWN_INSTRUMENT",
+          "INSTRUMENT_STATUS",
+          "SESSION_PHASE",
+          "ORDER_TYPE",
+          "TIME_IN_FORCE",
+          "PRICE_PRESENCE",
+          "QUANTITY_POSITIVE",
+          "LOT_SIZE",
+          "MIN_MAX_QTY",
+          "TICK_SIZE",
+          "PRICE_BAND",
+          "MAX_NOTIONAL",
+          "DUPLICATE_ORDER"
+        ],
+        "hits": {
+          "REQUIRED_FIELDS": 69,
+          "DUPLICATE_CL_ORD_ID": 113,
+          "UNKNOWN_INSTRUMENT": 24,
+          "INSTRUMENT_STATUS": 36,
+          "SESSION_PHASE": 392,
+          "ORDER_TYPE": 0,
+          "TIME_IN_FORCE": 0,
+          "PRICE_PRESENCE": 92,
+          "QUANTITY_POSITIVE": 68,
+          "LOT_SIZE": 23,
+          "MIN_MAX_QTY": 24,
+          "TICK_SIZE": 54,
+          "PRICE_BAND": 30,
+          "MAX_NOTIONAL": 1,
+          "DUPLICATE_ORDER": 80
+        },
+        "unreachable": {
+          "ORDER_TYPE": "every order type is enabled",
+          "TIME_IN_FORCE": "every TIF is enabled"
+        },
+        "reachable": 13,
+        "exercised": 13,
+        "missed": []
+      },
+      "differential": [
+        {
+          "sut": "Same engine behind FIX44 gateway",
+          "expected": "AGREE",
+          "outcome": "AGREE",
+          "commands": 5014,
+          "responses": 8588,
+          "first_divergence_step": null,
+          "detail": "",
+          "note": ""
+        },
+        {
+          "sut": "Mutant: LIFO_MATCHING",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 874,
+          "responses": 1209,
+          "first_divergence_step": 754,
+          "detail": "response #2 (C0000567): ord_status model=PARTIALLY_FILLED sut=FILLED, cl_ord_id model=C0000567 sut=A0000573, participant model=FIRM_C sut=FIRM_A, cum_qty model=2600 sut=500, leaves_qty model=2400 sut=0",
+          "note": "Price level filled newest-first instead of FIFO"
+        },
+        {
+          "sut": "Mutant: NO_DUPLICATE_CLORDID_CHECK",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 294,
+          "responses": 285,
+          "first_divergence_step": 133,
+          "detail": "response #0 (C0000004): exec_type model=REJECTED sut=NEW, ord_status model=REJECTED sut=NEW, leaves_qty model=0 sut=10, reject_reason model=DUPLICATE_CL_ORD_ID sut=None",
+          "note": "Duplicate ClOrdID validation removed"
+        },
+        {
+          "sut": "Mutant: FLAT_TICK_VALIDATION",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 497,
+          "responses": 480,
+          "first_divergence_step": 215,
+          "detail": "response #0 (F0000204): kind model=CXL_REJ sut=EXEC, response_to model=REPLACE sut=None, reject_reason model=INVALID_TICK sut=None",
+          "note": "Tick check ignores banded tick tables"
+        },
+        {
+          "sut": "Mutant: BAND_EDGE_OFF_BY_ONE",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 677,
+          "responses": 653,
+          "first_divergence_step": 120,
+          "detail": "response #0 (E0000115): exec_type model=NEW sut=REJECTED, ord_status model=NEW sut=REJECTED, leaves_qty model=160 sut=0, reject_reason model=None sut=PRICE_OUTSIDE_BAND",
+          "note": "Static price band rejects prices on the band edge"
+        },
+        {
+          "sut": "Mutant: NO_STP",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 796,
+          "responses": 1075,
+          "first_divergence_step": 753,
+          "detail": "response #3 (C0000670): exec_type model=CANCELED sut=TRADE, ord_status model=CANCELED sut=PARTIALLY_FILLED, cl_ord_id model=C0000670 sut=C0000714, orig_cl_ord_id model=C0000265 sut=None, side model=SELL sut=BUY, last_qty model=0 sut=1, last_px model=None sut=229, cum_qty model=0 sut=40, leaves_qty model=0 sut=10",
+          "note": "Self-trade prevention disabled"
+        }
+      ]
+    },
+    "CRYPTO": {
+      "passed": true,
+      "scenario_steps": [
+        38,
+        38
+      ],
+      "scenario_violations": 0,
+      "sim_violations": 0,
+      "trades": 1721,
+      "rejects": {
+        "UNSUPPORTED_TIF": 29,
+        "QTY_ABOVE_MAX": 30,
+        "PRICE_REQUIRED": 31,
+        "PRICE_OUTSIDE_BAND": 37,
+        "DUPLICATE_CL_ORD_ID": 95,
+        "INVALID_TICK": 34,
+        "INVALID_PRICE": 28,
+        "PRICE_NOT_ALLOWED": 28,
+        "UNKNOWN_INSTRUMENT": 34,
+        "INVALID_QUANTITY": 77,
+        "LOT_SIZE_VIOLATION": 30,
+        "INSTRUMENT_NOT_TRADABLE": 26,
+        "MISSING_OR_INVALID_FIELD": 48,
+        "EXCHANGE_CLOSED": 66
+      },
+      "protocol_mismatches": 0,
+      "coverage": {
+        "rules": [
+          "REQUIRED_FIELDS",
+          "DUPLICATE_CL_ORD_ID",
+          "UNKNOWN_INSTRUMENT",
+          "INSTRUMENT_STATUS",
+          "SESSION_PHASE",
+          "ORDER_TYPE",
+          "TIME_IN_FORCE",
+          "PRICE_PRESENCE",
+          "QUANTITY_POSITIVE",
+          "LOT_SIZE",
+          "MIN_MAX_QTY",
+          "TICK_SIZE",
+          "PRICE_BAND",
+          "MAX_NOTIONAL"
+        ],
+        "hits": {
+          "REQUIRED_FIELDS": 48,
+          "DUPLICATE_CL_ORD_ID": 96,
+          "UNKNOWN_INSTRUMENT": 34,
+          "INSTRUMENT_STATUS": 27,
+          "SESSION_PHASE": 68,
+          "ORDER_TYPE": 0,
+          "TIME_IN_FORCE": 30,
+          "PRICE_PRESENCE": 87,
+          "QUANTITY_POSITIVE": 77,
+          "LOT_SIZE": 32,
+          "MIN_MAX_QTY": 31,
+          "TICK_SIZE": 65,
+          "PRICE_BAND": 38,
+          "MAX_NOTIONAL": 1
+        },
+        "unreachable": {
+          "ORDER_TYPE": "every order type is enabled"
+        },
+        "reachable": 13,
+        "exercised": 13,
+        "missed": []
+      },
+      "differential": [
+        {
+          "sut": "Same engine behind JSON gateway",
+          "expected": "AGREE",
+          "outcome": "AGREE",
+          "commands": 5008,
+          "responses": 8739,
+          "first_divergence_step": null,
+          "detail": "",
+          "note": ""
+        },
+        {
+          "sut": "Mutant: LIFO_MATCHING",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 721,
+          "responses": 1177,
+          "first_divergence_step": 25,
+          "detail": "response #2 (D0000014): cl_ord_id model=D0000014 sut=D0000015",
+          "note": "Price level filled newest-first instead of FIFO"
+        },
+        {
+          "sut": "Mutant: NO_DUPLICATE_CLORDID_CHECK",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 325,
+          "responses": 494,
+          "first_divergence_step": 41,
+          "detail": "response #0 (F0000003): exec_type model=REJECTED sut=NEW, ord_status model=REJECTED sut=NEW, leaves_qty model=0 sut=50, reject_reason model=DUPLICATE_CL_ORD_ID sut=None",
+          "note": "Duplicate ClOrdID validation removed"
+        },
+        {
+          "sut": "Mutant: FLAT_TICK_VALIDATION",
+          "expected": "AGREE",
+          "outcome": "AGREE",
+          "commands": 5008,
+          "responses": 8739,
+          "first_divergence_step": null,
+          "detail": "",
+          "note": "all crypto instruments use a single tick size"
+        },
+        {
+          "sut": "Mutant: BAND_EDGE_OFF_BY_ONE",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 166,
+          "responses": 241,
+          "first_divergence_step": 44,
+          "detail": "response #0 (C0000041): exec_type model=NEW sut=REJECTED, ord_status model=NEW sut=REJECTED, leaves_qty model=1000 sut=0, reject_reason model=None sut=PRICE_OUTSIDE_BAND",
+          "note": "Static price band rejects prices on the band edge"
+        },
+        {
+          "sut": "Mutant: NO_STP",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 69,
+          "responses": 91,
+          "first_divergence_step": 44,
+          "detail": "response #1 (C0000041): exec_type model=CANCELED sut=TRADE, ord_status model=CANCELED sut=PARTIALLY_FILLED, last_qty model=0 sut=50, last_px model=None sut=0.5984, cum_qty model=0 sut=50, leaves_qty model=0 sut=950",
+          "note": "Self-trade prevention disabled"
+        }
+      ]
+    },
+    "COMMODITY": {
+      "passed": true,
+      "scenario_steps": [
+        31,
+        31
+      ],
+      "scenario_violations": 0,
+      "sim_violations": 0,
+      "trades": 1550,
+      "rejects": {
+        "EXCHANGE_CLOSED": 378,
+        "MISSING_OR_INVALID_FIELD": 47,
+        "UNKNOWN_INSTRUMENT": 30,
+        "DUPLICATE_CL_ORD_ID": 113,
+        "PRICE_NOT_ALLOWED": 24,
+        "PRICE_REQUIRED": 26,
+        "TIF_NOT_ALLOWED_IN_PHASE": 22,
+        "QTY_ABOVE_MAX": 31,
+        "INSTRUMENT_NOT_TRADABLE": 15,
+        "INSTRUMENT_EXPIRED": 18,
+        "INVALID_PRICE": 34,
+        "INVALID_TICK": 34,
+        "LOT_SIZE_VIOLATION": 18,
+        "INVALID_QUANTITY": 62,
+        "PRICE_OUTSIDE_BAND": 18
+      },
+      "protocol_mismatches": 0,
+      "coverage": {
+        "rules": [
+          "REQUIRED_FIELDS",
+          "DUPLICATE_CL_ORD_ID",
+          "UNKNOWN_INSTRUMENT",
+          "INSTRUMENT_STATUS",
+          "INSTRUMENT_EXPIRY",
+          "SESSION_PHASE",
+          "ORDER_TYPE",
+          "TIME_IN_FORCE",
+          "PRICE_PRESENCE",
+          "QUANTITY_POSITIVE",
+          "LOT_SIZE",
+          "MIN_MAX_QTY",
+          "TICK_SIZE",
+          "PRICE_BAND",
+          "MAX_NOTIONAL"
+        ],
+        "hits": {
+          "REQUIRED_FIELDS": 47,
+          "DUPLICATE_CL_ORD_ID": 113,
+          "UNKNOWN_INSTRUMENT": 30,
+          "INSTRUMENT_STATUS": 16,
+          "INSTRUMENT_EXPIRY": 19,
+          "SESSION_PHASE": 400,
+          "ORDER_TYPE": 0,
+          "TIME_IN_FORCE": 0,
+          "PRICE_PRESENCE": 84,
+          "QUANTITY_POSITIVE": 62,
+          "LOT_SIZE": 18,
+          "MIN_MAX_QTY": 32,
+          "TICK_SIZE": 62,
+          "PRICE_BAND": 18,
+          "MAX_NOTIONAL": 1
+        },
+        "unreachable": {
+          "ORDER_TYPE": "every order type is enabled",
+          "TIME_IN_FORCE": "every TIF is enabled"
+        },
+        "reachable": 13,
+        "exercised": 13,
+        "missed": []
+      },
+      "differential": [
+        {
+          "sut": "Same engine behind FIX44 gateway",
+          "expected": "AGREE",
+          "outcome": "AGREE",
+          "commands": 5013,
+          "responses": 8720,
+          "first_divergence_step": null,
+          "detail": "",
+          "note": ""
+        },
+        {
+          "sut": "Mutant: LIFO_MATCHING",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 885,
+          "responses": 1203,
+          "first_divergence_step": 828,
+          "detail": "response #1 (E0000780): ord_status model=PARTIALLY_FILLED sut=FILLED, last_qty model=3 sut=5, cum_qty model=3 sut=5, leaves_qty model=2 sut=0",
+          "note": "Price level filled newest-first instead of FIFO"
+        },
+        {
+          "sut": "Mutant: NO_DUPLICATE_CLORDID_CHECK",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 225,
+          "responses": 215,
+          "first_divergence_step": 56,
+          "detail": "response #0 (D0000034): reject_reason model=DUPLICATE_CL_ORD_ID sut=EXCHANGE_CLOSED",
+          "note": "Duplicate ClOrdID validation removed"
+        },
+        {
+          "sut": "Mutant: FLAT_TICK_VALIDATION",
+          "expected": "AGREE",
+          "outcome": "AGREE",
+          "commands": 5013,
+          "responses": 8720,
+          "first_divergence_step": null,
+          "detail": "",
+          "note": "all futures use a single tick size"
+        },
+        {
+          "sut": "Mutant: BAND_EDGE_OFF_BY_ONE",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 660,
+          "responses": 638,
+          "first_divergence_step": 218,
+          "detail": "response #0 (E0000206): exec_type model=NEW sut=REJECTED, ord_status model=NEW sut=REJECTED, leaves_qty model=10 sut=0, reject_reason model=None sut=PRICE_OUTSIDE_BAND",
+          "note": "Static price band rejects prices on the band edge"
+        },
+        {
+          "sut": "Mutant: NO_STP",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 843,
+          "responses": 1117,
+          "first_divergence_step": 826,
+          "detail": "response #1 (F0000652): exec_type model=CANCELED sut=TRADE, ord_status model=CANCELED sut=PARTIALLY_FILLED, cl_ord_id model=F0000652 sut=F0000778, side model=BUY sut=SELL, last_qty model=0 sut=3, last_px model=None sut=68.02, cum_qty model=0 sut=3, leaves_qty model=0 sut=47",
+          "note": "Self-trade prevention disabled"
+        }
+      ]
+    },
+    "COLLECTIBLE": {
+      "passed": true,
+      "scenario_steps": [
+        33,
+        33
+      ],
+      "scenario_violations": 0,
+      "sim_violations": 0,
+      "trades": 871,
+      "rejects": {
+        "EXCHANGE_CLOSED": 334,
+        "DUPLICATE_CL_ORD_ID": 97,
+        "UNSUPPORTED_ORDER_TYPE": 55,
+        "LOT_SIZE_VIOLATION": 34,
+        "PRICE_OUTSIDE_BAND": 24,
+        "INVALID_QUANTITY": 45,
+        "UNKNOWN_INSTRUMENT": 27,
+        "QTY_ABOVE_MAX": 22,
+        "DUPLICATE_ORDER": 114,
+        "PRICE_REQUIRED": 28,
+        "INVALID_PRICE": 30,
+        "TIF_NOT_ALLOWED_IN_PHASE": 12,
+        "MISSING_OR_INVALID_FIELD": 31,
+        "INSTRUMENT_NOT_TRADABLE": 47,
+        "INVALID_TICK": 15,
+        "UNSUPPORTED_TIF": 20
+      },
+      "protocol_mismatches": 0,
+      "coverage": {
+        "rules": [
+          "REQUIRED_FIELDS",
+          "DUPLICATE_CL_ORD_ID",
+          "UNKNOWN_INSTRUMENT",
+          "INSTRUMENT_STATUS",
+          "SESSION_PHASE",
+          "ORDER_TYPE",
+          "TIME_IN_FORCE",
+          "PRICE_PRESENCE",
+          "QUANTITY_POSITIVE",
+          "LOT_SIZE",
+          "MIN_MAX_QTY",
+          "UNIQUE_ITEM",
+          "TICK_SIZE",
+          "PRICE_BAND",
+          "MAX_NOTIONAL",
+          "DUPLICATE_ORDER"
+        ],
+        "hits": {
+          "REQUIRED_FIELDS": 31,
+          "DUPLICATE_CL_ORD_ID": 97,
+          "UNKNOWN_INSTRUMENT": 27,
+          "INSTRUMENT_STATUS": 48,
+          "SESSION_PHASE": 347,
+          "ORDER_TYPE": 56,
+          "TIME_IN_FORCE": 21,
+          "PRICE_PRESENCE": 58,
+          "QUANTITY_POSITIVE": 45,
+          "LOT_SIZE": 34,
+          "MIN_MAX_QTY": 23,
+          "UNIQUE_ITEM": 0,
+          "TICK_SIZE": 40,
+          "PRICE_BAND": 25,
+          "MAX_NOTIONAL": 4,
+          "DUPLICATE_ORDER": 115
+        },
+        "unreachable": {
+          "UNIQUE_ITEM": "shadowed by MIN_MAX_QTY (unique items have max_qty 1); defence in depth"
+        },
+        "reachable": 15,
+        "exercised": 15,
+        "missed": []
+      },
+      "differential": [
+        {
+          "sut": "Same engine behind JSON gateway",
+          "expected": "AGREE",
+          "outcome": "AGREE",
+          "commands": 5014,
+          "responses": 7140,
+          "first_divergence_step": null,
+          "detail": "",
+          "note": ""
+        },
+        {
+          "sut": "Mutant: LIFO_MATCHING",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 815,
+          "responses": 974,
+          "first_divergence_step": 758,
+          "detail": "response #2 (E0000216): cl_ord_id model=E0000216 sut=E0000712, orig_cl_ord_id model=E0000195 sut=None",
+          "note": "Price level filled newest-first instead of FIFO"
+        },
+        {
+          "sut": "Mutant: NO_DUPLICATE_CLORDID_CHECK",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 145,
+          "responses": 139,
+          "first_divergence_step": 1,
+          "detail": "response #0 (D0000001): reject_reason model=DUPLICATE_CL_ORD_ID sut=EXCHANGE_CLOSED",
+          "note": "Duplicate ClOrdID validation removed"
+        },
+        {
+          "sut": "Mutant: FLAT_TICK_VALIDATION",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 747,
+          "responses": 890,
+          "first_divergence_step": 174,
+          "detail": "response #0 (D0000161): kind model=CXL_REJ sut=EXEC, response_to model=REPLACE sut=None, reject_reason model=INVALID_TICK sut=None",
+          "note": "Tick check ignores banded tick tables"
+        },
+        {
+          "sut": "Mutant: BAND_EDGE_OFF_BY_ONE",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 654,
+          "responses": 632,
+          "first_divergence_step": 128,
+          "detail": "response #0 (C0000119): exec_type model=NEW sut=REJECTED, ord_status model=NEW sut=REJECTED, leaves_qty model=5 sut=0, reject_reason model=None sut=PRICE_OUTSIDE_BAND",
+          "note": "Static price band rejects prices on the band edge"
+        },
+        {
+          "sut": "Mutant: NO_STP",
+          "expected": "KILLED",
+          "outcome": "KILLED",
+          "commands": 948,
+          "responses": 1142,
+          "first_divergence_step": 845,
+          "detail": "response #11 (B0000790): exec_type model=CANCELED sut=TRADE, ord_status model=CANCELED sut=PARTIALLY_FILLED, last_qty model=0 sut=3, last_px model=None sut=658, cum_qty model=35 sut=38, leaves_qty model=0 sut=2",
+          "note": "Self-trade prevention disabled"
+        }
+      ]
+    }
+  }
+}

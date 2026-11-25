@@ -1,0 +1,15 @@
+{
+  "golden_source": "ModelEx Reference Data Golden Source",
+  "asset_class": "COMMODITY",
+  "as_of": "2026-11-25",
+  "_note": "Illustrative futures contracts. multiplier = contract_size; notional = price x qty x contract_size.",
+  "defaults": {"currency": "USD", "status": "ACTIVE", "lot_size": "1", "min_qty": "1", "price_band_pct": "10"},
+  "instruments": [
+    {"symbol": "CL-JAN27", "name": "WTI Crude Oil Futures Jan-2027",  "tick_size": "0.01",  "contract_size": "1000",  "unit": "barrel",    "reference_price": "71.25",  "max_qty": "500", "expiry": "2026-12-18"},
+    {"symbol": "GC-FEB27", "name": "Gold Futures Feb-2027",           "tick_size": "0.1",   "contract_size": "100",   "unit": "troy oz",   "reference_price": "2650.0", "max_qty": "200", "expiry": "2027-02-24", "max_notional": "30000000"},
+    {"symbol": "AH-3M",    "name": "Aluminium 3-Month",               "tick_size": "0.50",  "contract_size": "25",    "unit": "tonne",     "reference_price": "2600.00","max_qty": "300", "prompt": "3M"},
+    {"symbol": "ZW-MAR27", "name": "Wheat Futures Mar-2027 (c/bu)",   "tick_size": "0.25",  "contract_size": "50",    "unit": "bushel x100","reference_price": "550.25", "max_qty": "400", "expiry": "2027-03-12"},
+    {"symbol": "NG-NOV26", "name": "Natural Gas Futures Nov-2026",    "tick_size": "0.001", "contract_size": "10000", "unit": "mmBtu",     "reference_price": "3.250",  "max_qty": "300", "expiry": "2026-10-28"},
+    {"symbol": "KC-MAR27", "name": "Coffee Futures Mar-2027 (c/lb)",  "tick_size": "0.05",  "contract_size": "375",   "unit": "lb x100",   "reference_price": "245.50", "max_qty": "200", "expiry": "2027-03-19", "status": "SUSPENDED", "status_reason": "exchange review of delivery terms"}
+  ]
+}

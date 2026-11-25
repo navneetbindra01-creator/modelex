@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1120" viewBox="0 0 1000 1120" role="img" aria-label="How an order moves through ModelEx - collectibles example">
+<title>How an order moves through ModelEx - collectibles example</title>
+<defs><marker id="arrdc2626" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker></defs>
+<defs><marker id="arr475569" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker></defs>
+<rect width="1000" height="1120" fill="#ffffff"/>
+<text x="40" y="42" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#0f172a" text-anchor="start">How an order moves through ModelEx</text>
+<text x="40" y="66" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#475569" text-anchor="start">Worked example from the collectibles market (scenarios/collectible_orderbook.json)</text>
+<rect x="40" y="90" width="600" height="78" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+<text x="58" y="116" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#334155" text-anchor="start">① An order arrives</text>
+<text x="58" y="138" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0f172a" text-anchor="start">INV_A wants to BUY 600 units of FRAC-CAR-1962-GT, paying up to £42.55 each (GTC)</text>
+<text x="58" y="157" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#475569" text-anchor="start">Sent over the JSON API (or FIX) and translated into one standard internal order</text>
+<line x1="340" y1="168" x2="340" y2="190" stroke="#475569" stroke-width="2" marker-end="url(#arr475569)"/>
+<rect x="40" y="192" width="600" height="330" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+<text x="58" y="218" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#92400e" text-anchor="start">② Validation: 16 checks, always in the same order</text>
+<text x="58" y="238" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#475569" text-anchor="start">The first check that fails rejects the order, so the same mistake always gives the same reason.</text>
+<text x="58" y="266" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#78350f" text-anchor="start">Is it well-formed, new, and a real item?</text>
+<rect x="58" y="273" width="108.0" height="22" rx="11" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+<text x="112.0" y="288" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#92400e" text-anchor="middle">REQUIRED_FIELDS</text>
+<rect x="174.0" y="273" width="132.0" height="22" rx="11" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+<text x="240.0" y="288" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#92400e" text-anchor="middle">DUPLICATE_CL_ORD_ID</text>
+<rect x="314.0" y="273" width="126.0" height="22" rx="11" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+<text x="377.0" y="288" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#92400e" text-anchor="middle">UNKNOWN_INSTRUMENT</text>
+<text x="58" y="316" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#78350f" text-anchor="start">Can this item trade right now, with this kind of order?</text>
+<rect x="58" y="323" width="120.0" height="22" rx="11" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+<text x="118.0" y="338" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#92400e" text-anchor="middle">INSTRUMENT_STATUS</text>
+<rect x="186.0" y="323" width="96.0" height="22" rx="11" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+<text x="234.0" y="338" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#92400e" text-anchor="middle">SESSION_PHASE</text>
+<rect x="290.0" y="323" width="78.0" height="22" rx="11" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+<text x="329.0" y="338" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#92400e" text-anchor="middle">ORDER_TYPE</text>
+<rect x="376.0" y="323" width="96.0" height="22" rx="11" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+<text x="424.0" y="338" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#92400e" text-anchor="middle">TIME_IN_FORCE</text>
+<text x="58" y="366" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#78350f" text-anchor="start">Is there a price, and is the quantity allowed?</text>
+<rect x="58" y="373" width="102.0" height="22" rx="11" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+<text x="109.0" y="388" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#92400e" text-anchor="middle">PRICE_PRESENCE</text>
+<rect x="168.0" y="373" width="120.0" height="22" rx="11" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+<text x="228.0" y="388" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#92400e" text-anchor="middle">QUANTITY_POSITIVE</text>
+<rect x="296.0" y="373" width="66.0" height="22" rx="11" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+<text x="329.0" y="388" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#92400e" text-anchor="middle">LOT_SIZE</text>
+<rect x="370.0" y="373" width="84.0" height="22" rx="11" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+<text x="412.0" y="388" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#92400e" text-anchor="middle">MIN_MAX_QTY</text>
+<rect x="462.0" y="373" width="84.0" height="22" rx="11" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+<text x="504.0" y="388" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#92400e" text-anchor="middle">UNIQUE_ITEM</text>
+<text x="58" y="416" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#78350f" text-anchor="start">Is the price sensible?</text>
+<rect x="58" y="423" width="72.0" height="22" rx="11" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+<text x="94.0" y="438" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#92400e" text-anchor="middle">TICK_SIZE</text>
+<rect x="138.0" y="423" width="78.0" height="22" rx="11" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+<text x="177.0" y="438" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#92400e" text-anchor="middle">PRICE_BAND</text>
+<rect x="224.0" y="423" width="90.0" height="22" rx="11" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+<text x="269.0" y="438" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#92400e" text-anchor="middle">MAX_NOTIONAL</text>
+<text x="58" y="466" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#78350f" text-anchor="start">Is it an accidental repeat?</text>
+<rect x="58" y="473" width="108.0" height="22" rx="11" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+<text x="112.0" y="488" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#92400e" text-anchor="middle">DUPLICATE_ORDER</text>
+<text x="58" y="512" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#166534" text-anchor="start">Example order passes every check → accepted. INV_A receives a NEW report.</text>
+<line x1="640" y1="300" x2="658" y2="300" stroke="#dc2626" stroke-width="2" marker-end="url(#arrdc2626)"/>
+<rect x="660" y="192" width="300" height="330" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="678" y="218" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#991b1b" text-anchor="start">✗ Rejected: real examples</text>
+<text x="678" y="246" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="start">Buy 2 of the one-off art print</text>
+<text x="690" y="262" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#991b1b" text-anchor="start">→ QTY_ABOVE_MAX (max is 1)</text>
+<text x="678" y="284" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="start">Art print at £4,502</text>
+<text x="690" y="300" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#991b1b" text-anchor="start">→ INVALID_TICK (prices go up in £5)</text>
+<text x="678" y="322" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="start">Art print at £5,700</text>
+<text x="690" y="338" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#991b1b" text-anchor="start">→ PRICE_OUTSIDE_BAND (±25% of £4,500)</text>
+<text x="678" y="360" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="start">Rookie card (suspended)</text>
+<text x="690" y="376" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#991b1b" text-anchor="start">→ INSTRUMENT_NOT_TRADABLE</text>
+<text x="678" y="398" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="start">A market order</text>
+<text x="690" y="414" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#991b1b" text-anchor="start">→ UNSUPPORTED_ORDER_TYPE (limit only)</text>
+<text x="678" y="436" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="start">Same order again within 2 s</text>
+<text x="690" y="452" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#991b1b" text-anchor="start">→ DUPLICATE_ORDER</text>
+<text x="678" y="474" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="start">Reusing your own order ID</text>
+<text x="690" y="490" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#991b1b" text-anchor="start">→ DUPLICATE_CL_ORD_ID</text>
+<text x="678" y="512" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start" font-style="italic">Sender gets a REJECTED report + reason</text>
+<line x1="340" y1="522" x2="340" y2="556" stroke="#475569" stroke-width="2" marker-end="url(#arr475569)"/>
+<rect x="40" y="558" width="600" height="68" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="58" y="584" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1e40af" text-anchor="start">③ Session check: what phase is this item in right now?</text>
+<text x="58" y="606" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#475569" text-anchor="start">Collectibles day: 09:00 pre-open · 10:00 continuous · 20:00 pre-close · 20:30 closed</text>
+<line x1="185" y1="626" x2="185" y2="662" stroke="#475569" stroke-width="2" marker-end="url(#arr475569)"/>
+<line x1="495" y1="626" x2="495" y2="662" stroke="#475569" stroke-width="2" marker-end="url(#arr475569)"/>
+<rect x="40" y="664" width="290" height="128" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="58" y="688" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1e40af" text-anchor="start">Auction (call) phase</text>
+<text x="58" y="706" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="400" fill="#475569" text-anchor="start">PRE-OPEN · PRE-CLOSE · VOLATILITY AUCTION</text>
+<text x="58" y="728" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#0f172a" text-anchor="start">Nothing trades yet: the order waits.</text>
+<text x="58" y="746" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#0f172a" text-anchor="start">When the phase ends, all crossing</text>
+<text x="58" y="764" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#0f172a" text-anchor="start">orders trade at ONE price.  → diagram 3</text>
+<rect x="350" y="664" width="290" height="128" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="368" y="688" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#5b21b6" text-anchor="start">④ Continuous matching</text>
+<text x="368" y="706" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="400" fill="#475569" text-anchor="start">CONTINUOUS (10:00-20:00 for collectibles)</text>
+<text x="368" y="728" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#0f172a" text-anchor="start">Trades straight away with the best</text>
+<text x="368" y="746" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#0f172a" text-anchor="start">price on the other side; equal prices</text>
+<text x="368" y="764" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#0f172a" text-anchor="start">go first-come-first-served. → diagram 2</text>
+<line x1="185" y1="792" x2="185" y2="828" stroke="#475569" stroke-width="2" marker-end="url(#arr475569)"/>
+<line x1="495" y1="792" x2="495" y2="828" stroke="#475569" stroke-width="2" marker-end="url(#arr475569)"/>
+<rect x="40" y="830" width="600" height="138" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+<text x="58" y="856" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#166534" text-anchor="start">⑤ Order-book state</text>
+<text x="58" y="878" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#0f172a" text-anchor="start">Anything not traded rests here, sorted</text>
+<text x="58" y="896" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#0f172a" text-anchor="start">by price, then arrival time.</text>
+<text x="58" y="914" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#0f172a" text-anchor="start">DAY orders are removed at 20:30;</text>
+<text x="58" y="932" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#0f172a" text-anchor="start">GTC orders stay for the next day.</text>
+<rect x="352" y="846" width="272" height="108" rx="8" fill="#ffffff" stroke="#16a34a" stroke-width="1"/>
+<text x="488" y="866" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="700" fill="#166534" text-anchor="middle">FRAC-CAR-1962-GT after the trade</text>
+<line x1="488" y1="874" x2="488" y2="946" stroke="#cbd5e1"/>
+<text x="420" y="892" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#475569" text-anchor="middle">BIDS (buy)</text>
+<text x="556" y="892" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#475569" text-anchor="middle">ASKS (sell)</text>
+<text x="420" y="918" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#475569" text-anchor="middle" font-style="italic">(none)</text>
+<text x="556" y="918" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="middle">£42.55 × 200</text>
+<text x="556" y="936" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="400" fill="#475569" text-anchor="middle">FRAC_SELLER_2</text>
+<line x1="340" y1="968" x2="340" y2="1002" stroke="#475569" stroke-width="2" marker-end="url(#arr475569)"/>
+<rect x="40" y="1004" width="600" height="96" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+<text x="58" y="1030" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#334155" text-anchor="start">⑥ Responses go back to both sides</text>
+<text x="58" y="1052" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="start">Buyer:  NEW → TRADE 500 @ £42.50 → TRADE 100 @ £42.55 → FILLED (avg £42.5083)</text>
+<text x="58" y="1069" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="start">Sellers: TRADE reports of their own. A public Trade record is published.</text>
+<text x="58" y="1086" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="start">Each message is translated back to JSON or FIX for the participant.</text>
+<rect x="660" y="558" width="300" height="542" rx="10" fill="#f8fafc" stroke="#334155" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="678" y="584" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#0f172a" text-anchor="start">⑦ Monitoring sees every event</text>
+<text x="678" y="610" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="start">Tracks</text>
+<text x="678" y="630" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="start">•</text>
+<text x="678" y="647" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="start"></text>
+<text x="678" y="664" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="start">•</text>
+<text x="692" y="630" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="start">per item: open, high, low, last,</text>
+<text x="692" y="647" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="start">VWAP, volume, trades</text>
+<text x="692" y="664" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#0f172a" text-anchor="start">per firm: orders vs rejections</text>
+<text x="678" y="704" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#0f172a" text-anchor="start">Raises alerts</text>
+<text x="678" y="726" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#991b1b" text-anchor="start">CIRCUIT_BREAKER</text>
+<text x="690" y="743" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#0f172a" text-anchor="start">price would jump &gt;15% → item</text>
+<text x="690" y="758" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#0f172a" text-anchor="start">pauses in a 5-minute auction</text>
+<text x="678" y="777" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#991b1b" text-anchor="start">HIGH_REJECT_RATE</text>
+<text x="690" y="794" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#0f172a" text-anchor="start">a firm has &gt;40% of orders</text>
+<text x="690" y="809" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#0f172a" text-anchor="start">rejected (after 25 orders)</text>
+<text x="678" y="828" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#991b1b" text-anchor="start">LARGE_TRADE</text>
+<text x="690" y="845" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#0f172a" text-anchor="start">trade worth ≥ £100,000</text>
+<text x="678" y="864" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#991b1b" text-anchor="start">INSTRUMENT_HALT</text>
+<text x="690" y="881" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#0f172a" text-anchor="start">one item stopped by the</text>
+<text x="690" y="896" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#0f172a" text-anchor="start">exchange</text>
+<text x="678" y="915" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#991b1b" text-anchor="start">PHASE_TRANSITION_REJECTED</text>
+<text x="690" y="932" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#0f172a" text-anchor="start">an illegal session change</text>
+<text x="690" y="947" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#0f172a" text-anchor="start">was refused</text>
+<text x="678" y="1084" font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start" font-style="italic">Watches ② ③ ④ ⑤ ⑥</text>
+<line x1="642" y1="592" x2="658" y2="592" stroke="#475569" stroke-width="1.5" stroke-dasharray="6 5" marker-end="url(#arr475569)"/>
+<line x1="642" y1="900" x2="658" y2="900" stroke="#475569" stroke-width="1.5" stroke-dasharray="6 5" marker-end="url(#arr475569)"/>
+<line x1="642" y1="1050" x2="658" y2="1050" stroke="#475569" stroke-width="1.5" stroke-dasharray="6 5" marker-end="url(#arr475569)"/>
+</svg>
