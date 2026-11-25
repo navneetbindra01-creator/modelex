@@ -1,5 +1,27 @@
 # ModelEx: an open model exchange for model-based testing
 
+## Why this project exists
+
+ModelEx is an **open-source, automated, model-based exchange** that testing, training and executive teams can run inside their own organisations. It can be customised for any market: crypto, commodities, collectibles, equities and more. It provides standard exchange functionality: reference-data input, order-book handling, matching algorithms, order validation, trading sessions, monitoring and protocol mapping.
+
+### Benefits
+
+1. **High volume, wide edge-case coverage, reproducible.** A stateful generator produces thousands of orders per run and reaches edge cases that hand-written packs rarely hit: partial fills, amends after fills, circuit breakers mid-sweep, halts during auctions. Every run is seeded, so any finding replays exactly. Automated diffs between the model and the system under test catch behavioural regressions.
+2. **Fuzzed, non-deterministic-style order entry.** The order flow is randomised across participants, prices, sizes, order types, time-in-force, cancels, amends, duplicates and 16 kinds of malformed or invalid input. It behaves like real, messy order entry, yet stays fully replayable from its seed.
+3. **A strategic asset for the company.** Simulate a change to matching logic, alerts, configuration or validation rules before it reaches production, and measure the effect on the same order flow.
+4. **Training, onboarding and planning.** New joiners can step through auctions, circuit breakers and reject codes one order at a time. The simulator also supports capacity and scenario planning, such as more participants, heavier flow, new instruments or a different trading day.
+
+### Who uses it
+
+| Who | Use |
+|---|---|
+| **QA / automation** | Generate thousands of realistic, stateful order sequences. Check every step against invariants, then replay the same stream against your UAT venue and diff every response. This complements your existing functional and regression packs. |
+| **Business analysts** | Write acceptance scenarios as readable JSON ("buy 1,000 @ 72.60 in pre-open, expect uncross at 72.50 for 1,400"). Run them against the model before the vendor build exists. |
+| **Training** | Step through auctions, pro-rata allocation, STP, circuit breakers and reject codes with a deterministic engine that explains itself. |
+| **Simulation** | Replay a trading day, change one rule (tick table, band, matching algorithm, STP mode), and measure the effect. |
+
+## How it works
+
 ModelEx is a deterministic, configuration-driven electronic exchange written in pure Python (3.10+, no runtime dependencies). It is built to be the **reference model** in model-based testing (MBT): you describe your market in JSON (instruments, rules, sessions, matching, protocol codes), and ModelEx behaves like your venue. It also gives you the tooling to generate test flow, judge the results, and compare a real system under test (SUT) against the model.
 
 > **New to exchanges?** Start with [How ModelEx works](docs/HOW_IT_WORKS.md). It is a plain-English, illustrated walkthrough of validation, matching, the order book, sessions and monitoring, using real collectibles trades.
@@ -23,26 +45,6 @@ It supports **equities, crypto, commodities (futures) and collectibles** out of 
        MBT toolkit: scenario runner · stateful flow generator · 20 invariants ·
                     differential tester (model vs SUT) · mutants · reports
 ```
-
-## Why this project exists
-
-ModelEx is an **open-source, automated, model-based exchange** that testing, training and executive teams can run inside their own organisations. It can be customised for any market: crypto, commodities, collectibles, equities and more. It provides standard exchange functionality: reference-data input, order-book handling, matching algorithms, order validation, trading sessions, monitoring and protocol mapping.
-
-### Benefits
-
-1. **High volume, wide edge-case coverage, reproducible.** A stateful generator produces thousands of orders per run and reaches edge cases that hand-written packs rarely hit: partial fills, amends after fills, circuit breakers mid-sweep, halts during auctions. Every run is seeded, so any finding replays exactly. Automated diffs between the model and the system under test catch behavioural regressions.
-2. **Fuzzed, non-deterministic-style order entry.** The order flow is randomised across participants, prices, sizes, order types, time-in-force, cancels, amends, duplicates and 16 kinds of malformed or invalid input. It behaves like real, messy order entry, yet stays fully replayable from its seed.
-3. **A strategic asset for the company.** Simulate a change to matching logic, alerts, configuration or validation rules before it reaches production, and measure the effect on the same order flow.
-4. **Training, onboarding and planning.** New joiners can step through auctions, circuit breakers and reject codes one order at a time. The simulator also supports capacity and scenario planning, such as more participants, heavier flow, new instruments or a different trading day.
-
-### Who uses it
-
-| Who | Use |
-|---|---|
-| **QA / automation** | Generate thousands of realistic, stateful order sequences. Check every step against invariants, then replay the same stream against your UAT venue and diff every response. This complements your existing functional and regression packs. |
-| **Business analysts** | Write acceptance scenarios as readable JSON ("buy 1,000 @ 72.60 in pre-open, expect uncross at 72.50 for 1,400"). Run them against the model before the vendor build exists. |
-| **Training** | Step through auctions, pro-rata allocation, STP, circuit breakers and reject codes with a deterministic engine that explains itself. |
-| **Simulation** | Replay a trading day, change one rule (tick table, band, matching algorithm, STP mode), and measure the effect. |
 
 ## Quick start
 
@@ -76,7 +78,11 @@ Built-in rules: `REQUIRED_FIELDS`, `DUPLICATE_CL_ORD_ID` (per participant per da
 - `PRICE_TIME` gives strict FIFO.
 - `PRO_RATA` allocates in proportion to resting size, rounded down to the lot size, with any remainder going FIFO.
 
+![Continuous matching: best price first, then first-come-first-served](docs/images/02-continuous-matching.svg)
+
 Auctions (opening, closing, volatility, resumption) uncross at the price that maximises volume. Ties are broken by minimum imbalance, then market pressure, then distance from the reference price. Also supported: IOC, FOK (all-or-none, checked before matching), market orders, amend priority rules (a qty decrease keeps priority; a price change or qty increase loses it), and self-trade prevention (`NONE`, `CANCEL_RESTING`, `CANCEL_INCOMING`, `CANCEL_BOTH`).
+
+![Auction uncross: orders collect first, then everyone trades at one price](docs/images/03-auction-uncross.svg)
 
 **Order-book state** (`modelex/orderbook.py`). Price levels hold time-ordered queues. Market orders can rest only in auction call phases. Snapshots are available at L2/L3.
 
@@ -86,6 +92,8 @@ Auctions (opening, closing, volatility, resumption) uncross at the price that ma
 - Instrument-level overrides cover circuit-breaker volatility auctions and regulatory halts.
 - The clock is simulated, so every run is reproducible. It can be time-driven (`AdvanceTime` fires the schedule) or explicit (`SetPhase`).
 - The surveillance monitor keeps per-symbol OHLC/VWAP/volume and per-participant reject rates, and raises alerts for circuit breakers, halts, high reject rates, large trades and rejected transitions.
+
+![The trading day, circuit breakers and monitoring](docs/images/04-session-and-monitoring.svg)
 
 **Protocol-specific response mapping** (`modelex/protocol/`). The FIX 4.4 mapper handles NewOrderSingle, OrderCancelRequest and OrderCancelReplaceRequest inbound, and ExecutionReport and OrderCancelReject outbound, with real BodyLength and CheckSum. The JSON mapper uses REST/WebSocket-style messages. Every code table (OrdStatus, ExecType, OrdRejReason, CxlRejReason, vocabulary) lives in `protocol_maps/*.json`, so the model can mirror your Rules of Engagement exactly. Register further protocols with `@register_mapper`.
 
