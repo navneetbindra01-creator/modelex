@@ -1,5 +1,7 @@
 # ModelEx: an open model exchange for model-based testing
 
+When most code is LLM-written, the scarce resource is no longer code production—it is trustworthy specification, verification, and judgement. Model-based testing matters because it makes the intended behaviour explicit, generates broad and repeatable tests from that intent, and prevents AI-generated code from being validated only by AI-generated assumptions.
+
 ## Why this project exists
 
 ModelEx is an **open-source, automated, model-based exchange** that testing, training and executive teams can run inside their own organisations. It can be customised for any market: crypto, commodities, collectibles, equities and more. It provides standard exchange functionality: reference-data input, order-book handling, matching algorithms, order validation, trading sessions, monitoring and protocol mapping.
